@@ -87,19 +87,16 @@ function setupEventListeners() {
     document.getElementById('verb-search').addEventListener('input', filterVerbs);
     
     // Ship selection
-    document.querySelectorAll('.selectable-ship').forEach(shipEl => {
-        shipEl.addEventListener('click', () => {
-            const type = shipEl.dataset.ship;
-            gameState.selectedShip = type;
-            gameState.selectedOrientation = shipEl.dataset.orientation || 'horizontal';
-            highlightSelectedShip(type);
-        });
+    document.querySelectorAll('.ship').forEach(ship => {
+        ship.addEventListener('click', function(e) {
+            if (e.target.classList.contains('rotate-btn')) return;
 
-        shipEl.querySelector('.rotate-icon').addEventListener('click', e => {
-            e.stopPropagation();
-            shipEl.dataset.orientation = shipEl.dataset.orientation === 'horizontal' ? 'vertical' : 'horizontal';
-            gameState.selectedOrientation = shipEl.dataset.orientation;
-            shipEl.classList.toggle('vertical');
+            const shipType = this.dataset.ship;
+            if (gameState.ships[shipType].placed) return;
+
+            gameState.selectedShip = shipType;
+            gameState.selectedOrientation = this.dataset.orientation || 'horizontal';
+            highlightSelectedShip(shipType);
         });
     });
     
@@ -163,7 +160,7 @@ function applyVerbSelection() {
     });
     
     if (gameState.selectedVerbs.length === 0) {
-        alert('Please select at least one verb.');
+        showToast('Please select at least one verb.', 'error');
         return;
     }
     
@@ -334,10 +331,28 @@ function removeShip(type) {
     ship.placed = false;
 }
 
-function highlightSelectedShip(type) {
-    document.querySelectorAll('.selectable-ship').forEach(el => {
-        el.classList.toggle('active', el.dataset.ship === type);
+function highlightSelectedShip(shipType) {
+    document.querySelectorAll('.ship').forEach(ship => {
+        ship.classList.toggle('active', ship.dataset.ship === shipType);
     });
+}
+
+function rotateShip(button) {
+    const ship = button.closest('.ship');
+    const visual = ship.querySelector('.ship-visual');
+    const currentOrientation = ship.dataset.orientation || 'horizontal';
+
+    if (currentOrientation === 'horizontal') {
+        ship.dataset.orientation = 'vertical';
+        visual.classList.add('vertical');
+    } else {
+        ship.dataset.orientation = 'horizontal';
+        visual.classList.remove('vertical');
+    }
+
+    if (gameState.selectedShip === ship.dataset.ship) {
+        gameState.selectedOrientation = ship.dataset.orientation;
+    }
 }
 
 function updateShipsRemaining() {
@@ -349,7 +364,7 @@ function fixShips() {
     const allShipsPlaced = Object.values(gameState.ships).every(ship => ship.placed);
     
     if (!allShipsPlaced) {
-        alert('Please place all ships before fixing them.');
+        showToast('Please place all ships before fixing them.', 'info');
         return;
     }
     
@@ -388,7 +403,7 @@ function handleOwnBoardClick(cell) {
 
     if (gameState.phase === 'placement') {
         if (!gameState.selectedShip) {
-            alert('Select a ship first');
+            showToast('Select a ship first', 'info');
             return;
         }
 
@@ -408,7 +423,7 @@ function handleOwnBoardClick(cell) {
             ship.placed = true;
             updateShipsRemaining();
         } else {
-            alert("You can't place your boats next to each other");
+            showToast("You can't place your boats next to each other", 'error');
         }
         return;
     }
@@ -567,7 +582,9 @@ function resetGame() {
         document.querySelectorAll('.ship').forEach(ship => {
             ship.style.display = 'block';
             ship.dataset.orientation = 'horizontal';
-            ship.classList.remove('vertical', 'active');
+            ship.classList.remove('active');
+            const visual = ship.querySelector('.ship-visual');
+            if (visual) visual.classList.remove('vertical');
         });
         highlightSelectedShip(null);
         
@@ -582,4 +599,27 @@ function resetGame() {
         });
         document.getElementById('water-btn').classList.add('active');
     }
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
 }

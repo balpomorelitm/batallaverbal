@@ -525,6 +525,15 @@ main {
     margin-bottom: 1rem;
 }
 
+.attack-tip {
+    text-align: center;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #b3e5fc;
+    margin-top: -0.5rem;
+    margin-bottom: 1rem;
+}
+
 .board-wrapper {
     margin-bottom: 1.5rem;
 }
@@ -795,6 +804,33 @@ main {
     color: #e3f2fd;
     font-family: 'Rajdhani', sans-serif;
     font-size: 1.1rem;
+}
+
+.rotate-btn {
+    display: block;
+    margin: 0 auto 0.5rem auto;
+    background: transparent;
+    border: 1px solid #42a5f5;
+    color: #e3f2fd;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.rotate-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .ship-visual {
