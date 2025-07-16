@@ -324,55 +324,89 @@ function canPlaceShip(row, col, size, orientation) {
     return true;
 }
 
-function placeShip(row, col, ship) {
-    const size = ship.size;
+function placeShip(row, col, shipType, shipObject) {
+    const size = shipObject.size;
+    const orientation = gameState.selectedOrientation;
     const positions = [];
 
     for (let i = 0; i < size; i++) {
-        const shipRow = gameState.selectedOrientation === 'horizontal' ? row : row + i;
-        const shipCol = gameState.selectedOrientation === 'horizontal' ? col + i : col;
+        const shipRow = orientation === 'horizontal' ? row : row + i;
+        const shipCol = orientation === 'horizontal' ? col + i : col;
 
         const key = `${shipRow},${shipCol}`;
-        gameState.ownBoard[key] = ship.type;
+        gameState.ownBoard[key] = shipType;
         positions.push({ row: shipRow, col: shipCol });
 
         // Visual update
         const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${shipRow}"][data-col="${shipCol}"]`);
-        cell.classList.add('ship-placed');
-        cell.classList.remove('water');
-        if (cell.dataset.state === 'water') {
-            delete cell.dataset.state;
+        if (cell) {
+            cell.classList.add('ship-placed');
+            cell.classList.remove('water');
+            if (cell.dataset.state === 'water') {
+                delete cell.dataset.state;
+            }
         }
     }
 
-    // MARK SHIP AS PLACED AND STORE POSITION
-    gameState.ships[ship.type].placed = true;
-    gameState.ships[ship.type].position = positions;
+    // MARK SHIP AS PLACED AND STORE POSITION AND CURRENT ORIENTATION
+    gameState.ships[shipType].placed = true;
+    gameState.ships[shipType].position = positions;
+    gameState.ships[shipType].orientation = orientation;
 
     // HIDE THE SHIP FROM SELECTION
-    const shipElement = document.querySelector(`[data-ship="${ship.type}"]`);
-    if (shipElement) shipElement.classList.add('ship-placed-ui');
+    const shipElement = document.querySelector(`[data-ship="${shipType}"]`);
+    if (shipElement) {
+        shipElement.classList.add('ship-placed-ui');
+        const shipVisual = shipElement.querySelector('.ship-visual');
+        if (shipVisual) {
+            if (orientation === 'vertical') {
+                shipVisual.classList.add('vertical');
+            } else {
+                shipVisual.classList.remove('vertical');
+            }
+        }
+    }
 
     // CLEAR SELECTION
     gameState.selectedShip = null;
     highlightSelectedShip(null);
+    updateShipsRemaining();
 }
 
-function removeShip(type) {
-    const ship = gameState.ships[type];
-    if (!ship.position) return;
-    ship.position.forEach(pos => {
+function removeShip(shipType) {
+    const shipData = gameState.ships[shipType];
+    if (!shipData || !shipData.position) return;
+
+    shipData.position.forEach(pos => {
         const key = `${pos.row},${pos.col}`;
         delete gameState.ownBoard[key];
         const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
         if (cell) {
             cell.classList.remove('ship-placed', 'ship-fixed');
-            cell.dataset.state = 'water'; // Revert to water state
-            cell.classList.add('water'); // Add water class
+            cell.dataset.state = 'water';
+            cell.classList.add('water');
         }
     });
-    ship.position = null;
-    ship.placed = false;
+
+    shipData.position = null;
+    shipData.placed = false;
+    shipData.orientation = 'horizontal';
+
+    const shipElement = document.querySelector(`[data-ship="${shipType}"]`);
+    if (shipElement) {
+        shipElement.classList.remove('ship-placed-ui');
+        shipElement.dataset.orientation = 'horizontal';
+        const shipVisual = shipElement.querySelector('.ship-visual');
+        if (shipVisual) {
+            shipVisual.classList.remove('vertical');
+        }
+    }
+
+    if (gameState.selectedShip === shipType) {
+        gameState.selectedShip = null;
+        highlightSelectedShip(null);
+    }
+    updateShipsRemaining();
 }
 
 function handleShipRelocation(shipType) {
@@ -545,26 +579,17 @@ function handleOwnBoardClick(cell) {
             return;
         }
 
-        const shipType = gameState.selectedShip;
+        const shipType = gameState.selectedShip; // e.g., 'carrier'
+        const currentShipData = gameState.ships[shipType];
 
-        // If clicking on an already placed ship of the same type, remove it
-        if (ship.position && ship.position.some(pos => pos.row === row && pos.col === col)) {
-            removeShip(selectedType);
-            document.getElementById(`ship-${selectedType}`).style.display = ''; // Show ship back in list
-            updateShipsRemaining();
-            return;
-        }
-
-        if (canPlaceShip(row, col, ship.size, gameState.selectedOrientation)) {
-            placeShip(row, col, selectedType, gameState.selectedOrientation);
-            document.getElementById(`ship-${selectedType}`).style.display = 'none'; // Hide ship from list
-            ship.placed = true;
-
-            updateShipsRemaining();
+        if (canPlaceShip(row, col, currentShipData.size, gameState.selectedOrientation)) {
+            placeShip(row, col, shipType, currentShipData);
+            showToast(`${shipType.charAt(0).toUpperCase() + shipType.slice(1)} placed!`, 'info');
         } else {
-            showToast("You can't place your boats next to each other", 'error');
+            showToast("You can't place your boats next to each other or outside the board.", 'error');
         }
-        return;
+        hideShipPreview();
+        return; // Exit function after handling placement logic
     }
 
     // This part is for manually marking cells in 'battle' phase (for testing/dev)
@@ -722,19 +747,13 @@ function setAttackState(e) {
 
 function resetGame() {
     if (confirm('Are you sure you want to reset the game?')) {
-        // Reset all ships to unplaced state
+        // Reset all ships to unplaced state and visual
         Object.keys(gameState.ships).forEach(shipType => {
-            gameState.ships[shipType].placed = false;
-            gameState.ships[shipType].position = null;
-
-            // Reset ship UI
-            const shipElement = document.querySelector(`[data-ship="${shipType}"]`);
-            if (shipElement) shipElement.classList.remove('ship-placed-ui');
+            removeShip(shipType);
         });
 
-        // Reset game state
+        // Reset game state properties
         gameState.phase = 'placement';
-        resetShipsState(); // Reset ships to their initial state
         gameState.ownBoard = {};
         gameState.attackBoard = {};
         gameState.currentAttackState = 'water';
@@ -744,24 +763,19 @@ function resetGame() {
         // gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
         // gameState.selectedTense = 'present';
 
-
-        // Reset UI
+        // Reset UI elements that are not handled by removeShip
         document.getElementById('ships-container').style.display = 'block';
         document.getElementById('ship-placement-controls').style.display = 'block';
         document.querySelectorAll('.ship').forEach(ship => {
-            ship.style.display = 'block';
-            ship.dataset.orientation = 'horizontal';
             ship.classList.remove('active');
-            const visual = ship.querySelector('.ship-visual');
-            if (visual) visual.classList.remove('vertical');
         });
         highlightSelectedShip(null);
-        
-        // Reset boards visuals
+
+        // Regenerate boards to clear any visual artifacts and re-add water class
         generateBoards();
         updateShipsRemaining();
         updateGamePhase();
-        
+
         // Reset attack state buttons
         document.querySelectorAll('.btn-state').forEach(btn => {
             btn.classList.remove('active');
