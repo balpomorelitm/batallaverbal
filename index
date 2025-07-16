@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spanish Conjugation Battleship</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Spanish Conjugation Battleship</h1>
+        <div class="game-controls">
+            <button id="verb-selector-btn" class="btn btn-primary">Select Verbs</button>
+            <button id="reset-game-btn" class="btn btn-secondary">Reset Game</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Verb Selection Modal -->
+        <div id="verb-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Select Verbs</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="search-container">
+                        <input type="text" id="verb-search" placeholder="Search verbs..." class="search-input">
+                    </div>
+                    <div id="verb-list" class="verb-list">
+                        <!-- Verbs will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="apply-verbs-btn" class="btn btn-primary">Apply Selection</button>
+                    <button id="cancel-verbs-btn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Phase Indicator -->
+        <div id="game-phase" class="game-phase">
+            <span id="phase-text">Phase: Ship Placement</span>
+            <div id="ship-placement-controls" class="ship-controls">
+                <button id="fix-ships-btn" class="btn btn-success">Fix Ships</button>
+                <div class="ship-counter">
+                    <span>Ships to place: <span id="ships-remaining">5</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Boards Container -->
+        <div class="boards-container">
+            <!-- Own Board (Defense) -->
+            <div class="board-section">
+                <h2>My Fleet</h2>
+                <div class="board-wrapper">
+                    <div id="own-board" class="game-board">
+                        <div class="board-header">
+                            <div class="corner-cell"></div>
+                            <div class="pronoun-cell">yo</div>
+                            <div class="pronoun-cell">tú</div>
+                            <div class="pronoun-cell">él/ella</div>
+                            <div class="pronoun-cell">nosotros</div>
+                            <div class="pronoun-cell">vosotros</div>
+                            <div class="pronoun-cell">ellos/ellas</div>
+                        </div>
+                        <div id="own-board-grid" class="board-grid">
+                            <!-- Grid will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="board-legend">
+                    <span class="legend-item">
+                        <span class="legend-color water"></span> Water
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-color hit"></span> Hit
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-color sunk"></span> Sunk
+                    </span>
+                </div>
+            </div>
+
+            <!-- Attack Board -->
+            <div class="board-section">
+                <h2>Enemy Fleet</h2>
+                <div class="board-wrapper">
+                    <div id="attack-board" class="game-board">
+                        <div class="board-header">
+                            <div class="corner-cell"></div>
+                            <div class="pronoun-cell">yo</div>
+                            <div class="pronoun-cell">tú</div>
+                            <div class="pronoun-cell">él/ella</div>
+                            <div class="pronoun-cell">nosotros</div>
+                            <div class="pronoun-cell">vosotros</div>
+                            <div class="pronoun-cell">ellos/ellas</div>
+                        </div>
+                        <div id="attack-board-grid" class="board-grid">
+                            <!-- Grid will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="attack-controls">
+                    <button id="water-btn" class="btn btn-state active" data-state="water">💧 Water</button>
+                    <button id="hit-btn" class="btn btn-state" data-state="hit">💥 Hit</button>
+                    <button id="sunk-btn" class="btn btn-state" data-state="sunk">💀 Sunk</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ships Container -->
+        <div id="ships-container" class="ships-container">
+            <h3>Ships to Place</h3>
+            <div class="ships-list">
+                <div class="ship" data-ship="carrier" data-size="5">
+                    <span class="ship-name">Carrier (5)</span>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship" data-ship="battleship" data-size="4">
+                    <span class="ship-name">Battleship (4)</span>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship" data-ship="cruiser" data-size="3">
+                    <span class="ship-name">Cruiser (3)</span>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship" data-ship="submarine" data-size="3">
+                    <span class="ship-name">Submarine (3)</span>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+                <div class="ship" data-ship="destroyer" data-size="2">
+                    <span class="ship-name">Destroyer (2)</span>
+                    <div class="ship-visual">
+                        <div class="ship-cell"></div>
+                        <div class="ship-cell"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Info -->
+        <div id="game-info" class="game-info">
+            <div class="info-section">
+                <h3>Current Turn</h3>
+                <p id="turn-info">Place your ships on the board</p>
+            </div>
+            <div class="info-section">
+                <h3>Selected Verbs</h3>
+                <div id="selected-verbs" class="selected-verbs-display">
+                    <!-- Selected verbs will be shown here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Attack Modal -->
+    <div id="attack-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Attack Position</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="attack-info">
+                    <p>Position: <span id="attack-position"></span></p>
+                    <p>Verb: <span id="attack-verb"></span></p>
+                    <p>Pronoun: <span id="attack-pronoun"></span></p>
+                </div>
+                <div class="conjugation-input">
+                    <label for="conjugation">Enter the correct conjugation:</label>
+                    <input type="text" id="conjugation" placeholder="e.g., hablo">
+                    <button id="check-conjugation-btn" class="btn btn-primary">Check</button>
+                </div>
+                <div id="conjugation-result" class="conjugation-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
