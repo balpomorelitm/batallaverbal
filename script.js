@@ -462,13 +462,26 @@ function checkIfShipSunk(type){
 
 function handleAttackBoardClick(cell) {
     if (gameState.phase !== 'battle') return;
-    
-    // Set the state based on current attack state
-    cell.dataset.state = gameState.currentAttackState;
-    cell.className = `board-cell ${gameState.currentAttackState}`;
-    
-    // Show attack modal for conjugation
-    showAttackModal(cell);
+
+    if (cell.dataset.unlocked !== 'true') {
+        // Apply chosen state and require conjugation
+        cell.dataset.state = gameState.currentAttackState;
+        cell.className = `board-cell ${gameState.currentAttackState}`;
+        showAttackModal(cell);
+        return;
+    }
+
+    // Already unlocked: simply cycle through states
+    cycleAttackIcon(cell);
+}
+
+function cycleAttackIcon(cell) {
+    const order = ['water', 'hit', 'sunk'];
+    let idx = order.indexOf(cell.dataset.state || 'water');
+    idx = (idx + 1) % order.length;
+    cell.dataset.state = order[idx];
+    cell.classList.remove('water', 'hit', 'sunk');
+    cell.classList.add(order[idx]);
 }
 
 function showAttackModal(cell) {
@@ -487,17 +500,17 @@ function showAttackModal(cell) {
     
     // Setup conjugation check
     const checkBtn = document.getElementById('check-conjugation-btn');
-    checkBtn.onclick = () => checkConjugation(verb, pronoun);
+    checkBtn.onclick = () => checkConjugation(cell, verb, pronoun);
     
     // Allow Enter key to check
     document.getElementById('conjugation').onkeypress = (e) => {
         if (e.key === 'Enter') {
-            checkConjugation(verb, pronoun);
+            checkConjugation(cell, verb, pronoun);
         }
     };
 }
 
-function checkConjugation(verb, pronoun) {
+function checkConjugation(cell, verb, pronoun) {
     const userInput = document.getElementById('conjugation').value.toLowerCase().trim();
     const resultDiv = document.getElementById('conjugation-result');
     
@@ -506,6 +519,7 @@ function checkConjugation(verb, pronoun) {
         
         if (userInput === correctAnswer) {
             resultDiv.innerHTML = '<div class="success">✓ Correct! You can make this attack.</div>';
+            cell.dataset.unlocked = 'true';
             setTimeout(() => {
                 closeModals();
             }, 1500);
