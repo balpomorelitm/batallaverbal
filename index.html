@@ -51,11 +51,65 @@
 
         <!-- Game Boards Container -->
         <div class="boards-container">
-            <!-- Own Board (Defense) -->
-            <div class="board-section">
-                <h2>My Fleet</h2>
-                <div class="board-wrapper">
-                    <div id="own-board" class="game-board">
+            <div id="ships-container" class="ships-container">
+                <h3>Ships to Place</h3>
+                <div class="ships-list">
+                    <div id="ship-carrier" class="ship selectable-ship" data-ship="carrier" data-size="5" data-orientation="horizontal">
+                        <span class="ship-name">Carrier (5)</span>
+                        <div class="ship-visual">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="rotate-icon">↻</span>
+                    </div>
+                    <div id="ship-battleship" class="ship selectable-ship" data-ship="battleship" data-size="4" data-orientation="horizontal">
+                        <span class="ship-name">Battleship (4)</span>
+                        <div class="ship-visual">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="rotate-icon">↻</span>
+                    </div>
+                    <div id="ship-cruiser" class="ship selectable-ship" data-ship="cruiser" data-size="3" data-orientation="horizontal">
+                        <span class="ship-name">Cruiser (3)</span>
+                        <div class="ship-visual">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="rotate-icon">↻</span>
+                    </div>
+                    <div id="ship-submarine" class="ship selectable-ship" data-ship="submarine" data-size="3" data-orientation="horizontal">
+                        <span class="ship-name">Submarine (3)</span>
+                        <div class="ship-visual">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="rotate-icon">↻</span>
+                    </div>
+                    <div id="ship-destroyer" class="ship selectable-ship" data-ship="destroyer" data-size="2" data-orientation="horizontal">
+                        <span class="ship-name">Destroyer (2)</span>
+                        <div class="ship-visual">
+                            <div class="ship-cell"></div>
+                            <div class="ship-cell"></div>
+                        </div>
+                        <span class="rotate-icon">↻</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="boards-wrapper">
+                <!-- Own Board (Defense) -->
+                <div class="board-section">
+                    <h2>My Fleet</h2>
+                    <div class="board-wrapper">
+                        <div id="own-board" class="game-board">
                         <div class="board-header">
                             <div class="corner-cell"></div>
                             <div class="pronoun-cell">yo</div>
@@ -83,11 +137,11 @@
                 </div>
             </div>
 
-            <!-- Attack Board -->
-            <div class="board-section">
-                <h2>Enemy Fleet</h2>
-                <div class="board-wrapper">
-                    <div id="attack-board" class="game-board">
+                <!-- Attack Board -->
+                <div class="board-section">
+                    <h2>Enemy Fleet</h2>
+                    <div class="board-wrapper">
+                        <div id="attack-board" class="game-board">
                         <div class="board-header">
                             <div class="corner-cell"></div>
                             <div class="pronoun-cell">yo</div>
@@ -108,55 +162,7 @@
                     <button id="sunk-btn" class="btn btn-state" data-state="sunk">💀 Sunk</button>
                 </div>
             </div>
-        </div>
-
-        <!-- Ships Container -->
-        <div id="ships-container" class="ships-container">
-            <h3>Ships to Place</h3>
-            <div class="ships-list">
-                <div class="ship" data-ship="carrier" data-size="5">
-                    <span class="ship-name">Carrier (5)</span>
-                    <div class="ship-visual">
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                    </div>
-                </div>
-                <div class="ship" data-ship="battleship" data-size="4">
-                    <span class="ship-name">Battleship (4)</span>
-                    <div class="ship-visual">
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                    </div>
-                </div>
-                <div class="ship" data-ship="cruiser" data-size="3">
-                    <span class="ship-name">Cruiser (3)</span>
-                    <div class="ship-visual">
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                    </div>
-                </div>
-                <div class="ship" data-ship="submarine" data-size="3">
-                    <span class="ship-name">Submarine (3)</span>
-                    <div class="ship-visual">
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                    </div>
-                </div>
-                <div class="ship" data-ship="destroyer" data-size="2">
-                    <span class="ship-name">Destroyer (2)</span>
-                    <div class="ship-visual">
-                        <div class="ship-cell"></div>
-                        <div class="ship-cell"></div>
-                    </div>
-                </div>
-            </div>
+            </div> <!-- end boards-wrapper -->
         </div>
 
         <!-- Game Info -->

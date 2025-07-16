@@ -254,9 +254,15 @@ main {
 /* Boards Container */
 .boards-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 300px 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
+}
+
+.boards-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
 }
 
 .board-section {
@@ -448,10 +454,10 @@ main {
 /* Ships Container */
 .ships-container {
     background: rgba(255, 255, 255, 0.95);
-    padding: 1.5rem;
+    padding: 0.5rem;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+    margin: 0;
 }
 
 .ships-container h3 {
@@ -471,10 +477,12 @@ main {
     background: white;
     border: 2px solid #3498db;
     border-radius: 8px;
-    padding: 1rem;
-    cursor: grab;
+    padding: 0.5rem;
+    cursor: pointer;
     transition: all 0.3s ease;
     user-select: none;
+    width: 100%;
+    margin: 0.4rem 0;
 }
 
 .ship:hover {
@@ -498,6 +506,22 @@ main {
     display: flex;
     gap: 2px;
     justify-content: center;
+}
+
+.ship.vertical .ship-visual {
+    flex-direction: column;
+}
+
+.selectable-ship.active {
+    box-shadow: 0 0 0 2px #27ae60 inset;
+}
+
+.rotate-icon {
+    display: block;
+    text-align: right;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 4px;
 }
 
 .ship-cell {
@@ -729,21 +753,6 @@ main {
     }
 }
 
-/* Drag and Drop Visual Feedback */
-.ship.dragging {
-    opacity: 0.5;
-    transform: rotate(5deg);
-}
-
-.board-cell.drag-over {
-    background: rgba(52, 152, 219, 0.3);
-    border: 2px dashed #3498db;
-}
-
-.board-cell.invalid-drop {
-    background: rgba(231, 76, 60, 0.3);
-    border: 2px dashed #e74c3c;
-}
 
 /* Accessibility */
 .board-cell:focus {
