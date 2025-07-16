@@ -210,6 +210,15 @@ function generateOwnBoard() {
         
         grid.appendChild(row);
     });
+
+    // After populating, mark all empty cells as water by default
+    document.querySelectorAll('#own-board-grid .board-cell').forEach(cell => {
+        const key = `${cell.dataset.row},${cell.dataset.col}`;
+        if (!gameState.ownBoard[key]) {
+            cell.dataset.state = 'water';
+            cell.classList.add('water');
+        }
+    });
 }
 
 function generateAttackBoard() {
@@ -298,6 +307,10 @@ function placeShip(row, col, type, orientation) {
         // Visual update
         const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${shipRow}"][data-col="${shipCol}"]`);
         cell.classList.add('ship-placed');
+        cell.classList.remove('water');
+        if (cell.dataset.state === 'water') {
+            delete cell.dataset.state;
+        }
     }
 
     gameState.ships[type].position = positions;
@@ -313,6 +326,8 @@ function removeShip(type) {
         const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
         if (cell) {
             cell.classList.remove('ship-placed', 'ship-fixed');
+            cell.dataset.state = 'water';
+            cell.classList.add('water');
         }
     });
     ship.position = null;
@@ -400,20 +415,49 @@ function handleOwnBoardClick(cell) {
 
     if (gameState.phase !== 'battle') return;
 
-    // Toggle between water, hit, and sunk for manual marking
-    const currentState = cell.dataset.state || 'water';
+    const key = `${row},${col}`;
+    const shipType = gameState.ownBoard[key];
 
+    // Ignore clicks on empty water cells
+    if (!shipType && cell.dataset.state === 'water') {
+        return;
+    }
+
+    // Toggle hit/sunk state for ship cells
+    const currentState = cell.dataset.state;
     let newState;
-    if (currentState === 'water') {
-        newState = 'hit';
-    } else if (currentState === 'hit') {
+    if (currentState === 'hit') {
         newState = 'sunk';
+    } else if (currentState === 'sunk') {
+        newState = 'hit';
     } else {
-        newState = 'water';
+        newState = 'hit';
     }
 
     cell.dataset.state = newState;
-    cell.className = `board-cell ${cell.classList.contains('ship-placed') ? 'ship-placed ship-fixed' : ''} ${newState}`;
+    cell.classList.remove('water', 'hit', 'sunk');
+    cell.classList.add(newState);
+
+    if (shipType && newState === 'hit') {
+        checkIfShipSunk(shipType);
+    }
+}
+
+function checkIfShipSunk(type){
+    const positions = gameState.ships[type].position;
+    const allHit = positions.every(p=>{
+        const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${p.row}"][data-col="${p.col}"]`);
+        return cell.dataset.state === 'hit';
+    });
+    if(allHit){
+        positions.forEach(p=>{
+            const cellSel = `#own-board-grid .board-cell[data-row="${p.row}"][data-col="${p.col}"]`;
+            const cell = document.querySelector(cellSel);
+            cell.dataset.state = 'sunk';
+            cell.classList.remove('hit');
+            cell.classList.add('sunk');
+        });
+    }
 }
 
 function handleAttackBoardClick(cell) {
