@@ -969,6 +969,14 @@ main {
     background: rgba(239, 83, 80, 0.1);
 }
 
+/* Ship Images */
+.ship img {
+    display: block;
+    margin: 0.5rem auto;
+    max-width: 100%;
+    height: auto;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
