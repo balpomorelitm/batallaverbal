@@ -92,7 +92,12 @@ function setupEventListeners() {
             if (e.target.classList.contains('rotate-btn')) return;
 
             const shipType = this.dataset.ship;
-            if (gameState.ships[shipType].placed) return;
+
+            // CHECK IF SHIP IS ALREADY PLACED
+            if (gameState.ships[shipType].placed) {
+                showToast('This ship has already been placed!', 'error');
+                return; // Prevent selection
+            }
 
             gameState.selectedShip = shipType;
             gameState.selectedOrientation = this.dataset.orientation || 'horizontal';
@@ -283,16 +288,16 @@ function canPlaceShip(row, col, size, orientation) {
     return true;
 }
 
-function placeShip(row, col, type, orientation) {
-    const size = gameState.ships[type].size;
+function placeShip(row, col, ship) {
+    const size = ship.size;
     const positions = [];
 
     for (let i = 0; i < size; i++) {
-        const shipRow = orientation === 'horizontal' ? row : row + i;
-        const shipCol = orientation === 'horizontal' ? col + i : col;
+        const shipRow = gameState.selectedOrientation === 'horizontal' ? row : row + i;
+        const shipCol = gameState.selectedOrientation === 'horizontal' ? col + i : col;
 
         const key = `${shipRow},${shipCol}`;
-        gameState.ownBoard[key] = type;
+        gameState.ownBoard[key] = ship.type;
         positions.push({ row: shipRow, col: shipCol });
 
         // Visual update
@@ -304,8 +309,17 @@ function placeShip(row, col, type, orientation) {
         }
     }
 
-    gameState.ships[type].position = positions;
-    gameState.ships[type].orientation = orientation;
+    // MARK SHIP AS PLACED AND STORE POSITION
+    gameState.ships[ship.type].placed = true;
+    gameState.ships[ship.type].position = positions;
+
+    // HIDE THE SHIP FROM SELECTION
+    const shipElement = document.querySelector(`[data-ship="${ship.type}"]`);
+    if (shipElement) shipElement.classList.add('ship-placed-ui');
+
+    // CLEAR SELECTION
+    gameState.selectedShip = null;
+    highlightSelectedShip(null);
 }
 
 function removeShip(type) {
@@ -323,6 +337,44 @@ function removeShip(type) {
     });
     ship.position = null;
     ship.placed = false;
+}
+
+function handleShipRelocation(shipType) {
+    if (!gameState.ships[shipType].placed) return;
+
+    // Remove ship from board
+    const positions = gameState.ships[shipType].position;
+    positions.forEach(pos => {
+        const key = `${pos.row},${pos.col}`;
+        delete gameState.ownBoard[key];
+
+        const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
+        if (cell) {
+            cell.classList.remove('ship-placed');
+        }
+    });
+
+    // Reset ship state
+    gameState.ships[shipType].placed = false;
+    gameState.ships[shipType].position = null;
+
+    // Show ship in palette again
+    const shipElement = document.querySelector(`[data-ship="${shipType}"]`);
+    if (shipElement) shipElement.classList.remove('ship-placed-ui');
+
+    // Auto-select for replacement
+    gameState.selectedShip = shipType;
+    gameState.selectedOrientation = shipElement.dataset.orientation || 'horizontal';
+    highlightSelectedShip(shipType);
+
+    showToast(`${shipType} removed. Click on the board to place it again.`, 'info');
+    updateShipsRemaining();
+}
+
+function resetIndividualShip(shipType) {
+    if (gameState.ships[shipType].placed) {
+        handleShipRelocation(shipType);
+    }
 }
 
 function showShipPreview(cell) {
@@ -386,6 +438,16 @@ function rotateShip(button) {
 function updateShipsRemaining() {
     const remaining = Object.values(gameState.ships).filter(ship => !ship.placed).length;
     document.getElementById('ships-remaining').textContent = remaining;
+
+    // Update Fix Ships button state
+    const fixButton = document.getElementById('fix-ships-btn');
+    if (remaining === 0) {
+        fixButton.disabled = false;
+        fixButton.classList.remove('btn-disabled');
+    } else {
+        fixButton.disabled = true;
+        fixButton.classList.add('btn-disabled');
+    }
 }
 
 function fixShips() {
@@ -434,24 +496,25 @@ function handleOwnBoardClick(cell) {
 
     if (gameState.phase === 'placement') {
         if (!gameState.selectedShip) {
-            showToast('Select a ship first', 'info');
+            showToast('Select a ship first!', 'warning');
             return;
         }
 
-        const selectedType = gameState.selectedShip;
-        const ship = gameState.ships[selectedType];
+        const shipType = gameState.selectedShip;
 
-        if (ship.position && gameState.ownBoard[`${row},${col}`] === selectedType) {
-            removeShip(selectedType);
-            document.getElementById(`ship-${selectedType}`).style.display = '';
-            updateShipsRemaining();
+        // DOUBLE CHECK: Ensure ship isn't already placed
+        if (gameState.ships[shipType].placed) {
+            showToast('This ship type has already been placed!', 'error');
             return;
         }
 
-        if (canPlaceShip(row, col, ship.size, gameState.selectedOrientation)) {
-            placeShip(row, col, selectedType, gameState.selectedOrientation);
-            document.getElementById(`ship-${selectedType}`).style.display = 'none';
-            ship.placed = true;
+        const shipSize = gameState.ships[shipType].size;
+
+        if (canPlaceShip(row, col, shipSize, gameState.selectedOrientation)) {
+            placeShip(row, col, {
+                type: shipType,
+                size: shipSize
+            });
             updateShipsRemaining();
         } else {
             showToast("You can't place your boats next to each other", 'error');
@@ -600,6 +663,16 @@ function setAttackState(e) {
 
 function resetGame() {
     if (confirm('Are you sure you want to reset the game?')) {
+        // Reset all ships to unplaced state
+        Object.keys(gameState.ships).forEach(shipType => {
+            gameState.ships[shipType].placed = false;
+            gameState.ships[shipType].position = null;
+
+            // Reset ship UI
+            const shipElement = document.querySelector(`[data-ship="${shipType}"]`);
+            if (shipElement) shipElement.classList.remove('ship-placed-ui');
+        });
+
         // Reset game state
         gameState.phase = 'placement';
         gameState.ships = {
