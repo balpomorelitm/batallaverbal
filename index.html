@@ -18,6 +18,7 @@
     </header>
 
     <main>
+        <!-- Verb Selection Modal -->
         <div id="verb-modal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -25,16 +26,12 @@
                     <span class="close">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <div class="tense-selector">
-                        <label for="tense-select">Select Tense:</label>
-                        <select id="tense-select" class="search-input">
-                            </select>
-                    </div>
                     <div class="search-container">
                         <input type="text" id="verb-search" placeholder="Search verbs..." class="search-input">
                     </div>
                     <div id="verb-list" class="verb-list">
-                        </div>
+                        <!-- Verbs will be populated by JavaScript -->
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button id="apply-verbs-btn" class="btn btn-primary">Apply Selection</button>
@@ -43,6 +40,7 @@
             </div>
         </div>
 
+        <!-- Game Phase Indicator -->
         <div id="game-phase" class="game-phase">
             <span id="phase-text">Phase: Ship Placement</span>
             <div id="ship-placement-controls" class="ship-controls">
@@ -53,6 +51,7 @@
             </div>
         </div>
 
+        <!-- Game Boards Container -->
         <div class="boards-container">
             <div id="ships-container" class="ships-container">
                 <h3>Ships to Place</h3>
@@ -118,6 +117,7 @@
             </div>
 
             <div class="boards-wrapper">
+                <!-- Own Board (Defense) -->
                 <div class="board-section">
                     <h2>My Fleet</h2>
                     <div class="board-wrapper">
@@ -126,14 +126,14 @@
                             <div class="corner-cell"></div>
                             <div class="pronoun-cell">yo</div>
                             <div class="pronoun-cell">tú</div>
-                            <div class="pronoun-cell">vos</div>
-                            <div class="pronoun-cell">él</div>
+                            <div class="pronoun-cell">él/ella</div>
                             <div class="pronoun-cell">nosotros</div>
                             <div class="pronoun-cell">vosotros</div>
-                            <div class="pronoun-cell">ellos</div>
+                            <div class="pronoun-cell">ellos/ellas</div>
                         </div>
                         <div id="own-board-grid" class="board-grid">
-                            </div>
+                            <!-- Grid will be populated by JavaScript -->
+                        </div>
                     </div>
                 </div>
                 <div class="board-legend">
@@ -149,6 +149,7 @@
                 </div>
             </div>
 
+                <!-- Attack Board -->
                 <div class="board-section enemy-board">
                     <h2>Enemy Fleet</h2>
                     <p class="attack-tip">💡 Tip: Once unlocked, click squares to cycle through 💧 / 💥 / 💀</p>
@@ -158,14 +159,14 @@
                             <div class="corner-cell"></div>
                             <div class="pronoun-cell">yo</div>
                             <div class="pronoun-cell">tú</div>
-                            <div class="pronoun-cell">vos</div>
-                            <div class="pronoun-cell">él</div>
+                            <div class="pronoun-cell">él/ella</div>
                             <div class="pronoun-cell">nosotros</div>
                             <div class="pronoun-cell">vosotros</div>
-                            <div class="pronoun-cell">ellos</div>
+                            <div class="pronoun-cell">ellos/ellas</div>
                         </div>
                         <div id="attack-board-grid" class="board-grid">
-                            </div>
+                            <!-- Grid will be populated by JavaScript -->
+                        </div>
                     </div>
                 </div>
                 <div class="attack-controls">
@@ -174,8 +175,10 @@
                     <button id="sunk-btn" class="btn btn-state" data-state="sunk">💀 Sunk</button>
                 </div>
             </div>
-            </div> </div>
+            </div> <!-- end boards-wrapper -->
+        </div>
 
+        <!-- Game Info -->
         <div id="game-info" class="game-info">
             <div class="info-section">
                 <h3>Current Turn</h3>
@@ -184,11 +187,13 @@
             <div class="info-section">
                 <h3>Selected Verbs</h3>
                 <div id="selected-verbs" class="selected-verbs-display">
-                    </div>
+                    <!-- Selected verbs will be shown here -->
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- Attack Modal -->
     <div id="attack-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

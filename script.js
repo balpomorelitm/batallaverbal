@@ -2,7 +2,6 @@
 let gameState = {
     phase: 'placement', // 'placement', 'battle'
     selectedVerbs: [],
-    selectedTense: 'present', // New: default tense
     ships: {
         carrier: { size: 5, placed: false, position: null, orientation: 'horizontal' },
         battleship: { size: 4, placed: false, position: null, orientation: 'horizontal' },
@@ -17,41 +16,49 @@ let gameState = {
     selectedOrientation: 'horizontal'
 };
 
-// Global variable to store all verbs data from JSON
-let allVerbsData = [];
+// Default verbs list
+const defaultVerbs = [
+    'hablar', 'comer', 'vivir', 'estudiar', 'trabajar', 'caminar', 'correr', 'escribir',
+    'leer', 'beber', 'ser', 'llamarse', 'tener', 'hacer', 'ir', 'venir', 'ver', 'dar',
+    'saber', 'querer', 'poder', 'decir', 'estar', 'poner', 'salir', 'volver', 'llegar',
+    'pasar', 'quedar', 'seguir', 'conocer', 'parecer', 'resultar', 'encontrar', 'llevar',
+    'traer', 'conseguir', 'sentir', 'dormir', 'morir', 'servir', 'vestir', 'pedir',
+    'repetir', 'mentir', 'preferir', 'divertir', 'convertir', 'advertir', 'sugerir'
+];
 
-const pronouns = ['yo', 'tú', 'vos', 'él', 'nosotros', 'vosotros', 'ellos'];
+// Basic conjugations for validation
+const conjugations = {
+    'hablar': { 'yo': 'hablo', 'tú': 'hablas', 'él/ella': 'habla', 'nosotros': 'hablamos', 'vosotros': 'habláis', 'ellos/ellas': 'hablan' },
+    'comer': { 'yo': 'como', 'tú': 'comes', 'él/ella': 'come', 'nosotros': 'comemos', 'vosotros': 'coméis', 'ellos/ellas': 'comen' },
+    'vivir': { 'yo': 'vivo', 'tú': 'vives', 'él/ella': 'vive', 'nosotros': 'vivimos', 'vosotros': 'vivís', 'ellos/ellas': 'viven' },
+    'estudiar': { 'yo': 'estudio', 'tú': 'estudias', 'él/ella': 'estudia', 'nosotros': 'estudiamos', 'vosotros': 'estudiáis', 'ellos/ellas': 'estudian' },
+    'trabajar': { 'yo': 'trabajo', 'tú': 'trabajas', 'él/ella': 'trabaja', 'nosotros': 'trabajamos', 'vosotros': 'trabajáis', 'ellos/ellas': 'trabajan' },
+    'caminar': { 'yo': 'camino', 'tú': 'caminas', 'él/ella': 'camina', 'nosotros': 'caminamos', 'vosotros': 'camináis', 'ellos/ellas': 'caminan' },
+    'correr': { 'yo': 'corro', 'tú': 'corres', 'él/ella': 'corre', 'nosotros': 'corremos', 'vosotros': 'corréis', 'ellos/ellas': 'corren' },
+    'escribir': { 'yo': 'escribo', 'tú': 'escribes', 'él/ella': 'escribe', 'nosotros': 'escribimos', 'vosotros': 'escribís', 'ellos/ellas': 'escriben' },
+    'leer': { 'yo': 'leo', 'tú': 'lees', 'él/ella': 'lee', 'nosotros': 'leemos', 'vosotros': 'leéis', 'ellos/ellas': 'leen' },
+    'beber': { 'yo': 'bebo', 'tú': 'bebes', 'él/ella': 'bebe', 'nosotros': 'bebemos', 'vosotros': 'bebéis', 'ellos/ellas': 'beben' },
+    'ser': { 'yo': 'soy', 'tú': 'eres', 'él/ella': 'es', 'nosotros': 'somos', 'vosotros': 'sois', 'ellos/ellas': 'son' },
+    'llamarse': { 'yo': 'me llamo', 'tú': 'te llamas', 'él/ella': 'se llama', 'nosotros': 'nos llamamos', 'vosotros': 'os llamáis', 'ellos/ellas': 'se llaman' }
+};
+
+const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'];
 
 // Initialize the game
 document.addEventListener('DOMContentLoaded', function() {
-    // Fetch verbs data from verbos.json
-    fetch('verbos.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            allVerbsData = data;
-            initializeGame();
-            setupEventListeners();
-        })
-        .catch(error => console.error('Error loading verbs data:', error));
+    initializeGame();
+    setupEventListeners();
 });
 
 function initializeGame() {
-    // Set default verbs from loaded data (e.g., first 10 infinitives)
-    // Ensure that selected verbs are available in the loaded allVerbsData
-    gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
+    // Set default verbs
+    gameState.selectedVerbs = ['hablar', 'comer', 'vivir', 'estudiar', 'trabajar', 'caminar', 'correr', 'escribir', 'ser', 'llamarse'];
     
     // Initialize boards
     generateBoards();
     updateSelectedVerbsDisplay();
     updateGamePhase();
     populateVerbModal();
-    populateTenseSelector(); // Call the new function to populate the tense dropdown
-    updateShipsRemaining(); // Ensure ship counter is updated on init
 }
 
 function setupEventListeners() {
@@ -60,13 +67,6 @@ function setupEventListeners() {
     document.getElementById('apply-verbs-btn').addEventListener('click', applyVerbSelection);
     document.getElementById('cancel-verbs-btn').addEventListener('click', closeVerbModal);
     
-    // Tense selection
-    document.getElementById('tense-select').addEventListener('change', (event) => {
-        gameState.selectedTense = event.target.value;
-        // Optionally, regenerate boards or show a message if tense changes affect current game
-        // For simplicity, we'll just update the selected tense
-    });
-
     // Modal close buttons
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', closeModals);
@@ -117,49 +117,17 @@ function populateVerbModal() {
     const verbList = document.getElementById('verb-list');
     verbList.innerHTML = '';
     
-    allVerbsData.forEach(verbObj => {
-        const infinitive = verbObj.infinitive_es;
+    defaultVerbs.forEach(verb => {
         const verbItem = document.createElement('div');
         verbItem.className = 'verb-item';
         verbItem.innerHTML = `
             <label>
-                <input type="checkbox" value="${infinitive}" ${gameState.selectedVerbs.includes(infinitive) ? 'checked' : ''}>
-                ${infinitive}
+                <input type="checkbox" value="${verb}" ${gameState.selectedVerbs.includes(verb) ? 'checked' : ''}>
+                ${verb}
             </label>
         `;
         verbList.appendChild(verbItem);
     });
-}
-
-function populateTenseSelector() {
-    const tenseSelect = document.getElementById('tense-select');
-    tenseSelect.innerHTML = ''; // Clear existing options
-
-    // Assuming all verbs have the same tenses available, pick from the first one
-    if (allVerbsData.length > 0) {
-        const firstVerb = allVerbsData[0];
-        for (const tenseKey in firstVerb.conjugations) {
-            const option = document.createElement('option');
-            option.value = tenseKey;
-            option.textContent = formatTenseName(tenseKey);
-            tenseSelect.appendChild(option);
-        }
-    }
-    // Set the selected value to the current game state's tense
-    tenseSelect.value = gameState.selectedTense;
-}
-
-// Helper function to format tense names for display
-function formatTenseName(tenseKey) {
-    const tenseNames = {
-        'present': 'Presente',
-        'past_simple': 'Pretérito Perfecto Simple',
-        'present_perfect': 'Pretérito Perfecto Compuesto',
-        'future_simple': 'Futuro Simple',
-        'condicional_simple': 'Condicional Simple',
-        'imperfect_indicative': 'Pretérito Imperfecto'
-    };
-    return tenseNames[tenseKey] || tenseKey.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
 }
 
 function filterVerbs() {
@@ -201,13 +169,9 @@ function applyVerbSelection() {
         return;
     }
     
-    // Reset ships when verbs are re-selected
-    resetShipsState();
     generateBoards();
     updateSelectedVerbsDisplay();
     closeVerbModal();
-    updateShipsRemaining();
-    updateGamePhase(); // Update game phase display to reflect changes
 }
 
 function updateSelectedVerbsDisplay() {
@@ -367,8 +331,8 @@ function removeShip(type) {
         const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
         if (cell) {
             cell.classList.remove('ship-placed', 'ship-fixed');
-            cell.dataset.state = 'water'; // Revert to water state
-            cell.classList.add('water'); // Add water class
+            cell.dataset.state = 'water';
+            cell.classList.add('water');
         }
     });
     ship.position = null;
@@ -425,18 +389,10 @@ function showShipPreview(cell) {
     for (let i = 0; i < shipSize; i++) {
         const previewRow = orientation === 'horizontal' ? row : row + i;
         const previewCol = orientation === 'horizontal' ? col + i : col;
-        
-        // Only add to preview if within bounds
-        if (previewRow < gameState.selectedVerbs.length && previewCol < pronouns.length) {
-            previewCells.push({ row: previewRow, col: previewCol });
-        } else {
-            // If any part of the ship is out of bounds, it's invalid
-            previewCells.length = 0; // Clear preview cells
-            break;
-        }
+        previewCells.push({ row: previewRow, col: previewCol });
     }
 
-    const isValid = previewCells.length === shipSize && canPlaceShip(row, col, shipSize, orientation);
+    const isValid = canPlaceShip(row, col, shipSize, orientation);
 
     previewCells.forEach(pos => {
         const previewCell = document.querySelector(
@@ -448,7 +404,6 @@ function showShipPreview(cell) {
         }
     });
 }
-
 
 function hideShipPreview() {
     document.querySelectorAll('.ship-preview').forEach(cell => {
@@ -547,19 +502,19 @@ function handleOwnBoardClick(cell) {
 
         const shipType = gameState.selectedShip;
 
-        // If clicking on an already placed ship of the same type, remove it
-        if (ship.position && ship.position.some(pos => pos.row === row && pos.col === col)) {
-            removeShip(selectedType);
-            document.getElementById(`ship-${selectedType}`).style.display = ''; // Show ship back in list
-            updateShipsRemaining();
+        // DOUBLE CHECK: Ensure ship isn't already placed
+        if (gameState.ships[shipType].placed) {
+            showToast('This ship type has already been placed!', 'error');
             return;
         }
 
-        if (canPlaceShip(row, col, ship.size, gameState.selectedOrientation)) {
-            placeShip(row, col, selectedType, gameState.selectedOrientation);
-            document.getElementById(`ship-${selectedType}`).style.display = 'none'; // Hide ship from list
-            ship.placed = true;
+        const shipSize = gameState.ships[shipType].size;
 
+        if (canPlaceShip(row, col, shipSize, gameState.selectedOrientation)) {
+            placeShip(row, col, {
+                type: shipType,
+                size: shipSize
+            });
             updateShipsRemaining();
         } else {
             showToast("You can't place your boats next to each other", 'error');
@@ -567,7 +522,6 @@ function handleOwnBoardClick(cell) {
         return;
     }
 
-    // This part is for manually marking cells in 'battle' phase (for testing/dev)
     if (gameState.phase !== 'battle') return;
 
     const key = `${row},${col}`;
@@ -576,10 +530,9 @@ function handleOwnBoardClick(cell) {
     if (!hasShip) {
         const currentState = cell.dataset.state || 'empty';
 
-        if (currentState === 'empty' || currentState === 'sunk') {
+        if (currentState === 'empty') {
             cell.dataset.state = 'water';
             cell.classList.add('water');
-            cell.classList.remove('sunk'); // Remove sunk if it was there
         } else if (currentState === 'water') {
             cell.dataset.state = 'empty';
             cell.classList.remove('water');
@@ -590,7 +543,7 @@ function handleOwnBoardClick(cell) {
         if (currentState === 'hit') {
             newState = 'sunk';
         } else if (currentState === 'sunk') {
-            newState = 'water'; // Revert sunk to water
+            newState = 'hit';
         } else {
             newState = 'hit';
         }
@@ -602,8 +555,6 @@ function handleOwnBoardClick(cell) {
         if (newState === 'hit') {
             const shipType = gameState.ownBoard[key];
             checkIfShipSunk(shipType);
-        } else if (newState === 'sunk') {
-            checkGameOver();
         }
     }
 }
@@ -612,17 +563,15 @@ function checkIfShipSunk(type){
     const positions = gameState.ships[type].position;
     const allHit = positions.every(p=>{
         const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${p.row}"][data-col="${p.col}"]`);
-        return cell && cell.dataset.state === 'hit'; // Ensure cell exists
+        return cell.dataset.state === 'hit';
     });
     if(allHit){
         positions.forEach(p=>{
             const cellSel = `#own-board-grid .board-cell[data-row="${p.row}"][data-col="${p.col}"]`;
             const cell = document.querySelector(cellSel);
-            if(cell) { // Ensure cell exists
-                cell.dataset.state = 'sunk';
-                cell.classList.remove('hit');
-                cell.classList.add('sunk');
-            }
+            cell.dataset.state = 'sunk';
+            cell.classList.remove('hit');
+            cell.classList.add('sunk');
         });
         checkGameOver();
     }
@@ -633,13 +582,13 @@ function handleAttackBoardClick(cell) {
 
     if (cell.dataset.unlocked !== 'true') {
         // Apply chosen state and require conjugation
-        // cell.dataset.state = gameState.currentAttackState; // No, state is set after conjugation check
-        // cell.className = `board-cell ${gameState.currentAttackState}`; // No, state is set after conjugation check
+        cell.dataset.state = gameState.currentAttackState;
+        cell.className = `board-cell ${gameState.currentAttackState}`;
         showAttackModal(cell);
         return;
     }
 
-    // Already unlocked: simply cycle through states (for testing purposes)
+    // Already unlocked: simply cycle through states
     cycleAttackIcon(cell);
 }
 
@@ -656,13 +605,13 @@ function showAttackModal(cell) {
     const modal = document.getElementById('attack-modal');
     const verb = cell.dataset.verb;
     const pronoun = cell.dataset.pronoun;
-    const position = `${String.fromCharCode(65 + parseInt(cell.dataset.col))}${parseInt(cell.dataset.row) + 1}`; // e.g., A1
-
+    const position = `${String.fromCharCode(65 + parseInt(cell.dataset.col))}${parseInt(cell.dataset.row) + 1}`;
+    
     document.getElementById('attack-position').textContent = position;
     document.getElementById('attack-verb').textContent = verb;
     document.getElementById('attack-pronoun').textContent = pronoun;
-    document.getElementById('conjugation').value = ''; // Clear previous input
-    document.getElementById('conjugation-result').innerHTML = ''; // Clear previous result
+    document.getElementById('conjugation').value = '';
+    document.getElementById('conjugation-result').innerHTML = '';
     
     modal.style.display = 'block';
     
@@ -673,7 +622,6 @@ function showAttackModal(cell) {
     // Allow Enter key to check
     document.getElementById('conjugation').onkeypress = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Prevent default form submission
             checkConjugation(cell, verb, pronoun);
         }
     };
@@ -682,30 +630,23 @@ function showAttackModal(cell) {
 function checkConjugation(cell, verb, pronoun) {
     const userInput = document.getElementById('conjugation').value.toLowerCase().trim();
     const resultDiv = document.getElementById('conjugation-result');
-    const selectedTense = gameState.selectedTense;
-
-    // Find the verb object in allVerbsData
-    const verbObj = allVerbsData.find(v => v.infinitive_es === verb);
-
-    if (verbObj && verbObj.conjugations && verbObj.conjugations[selectedTense] && verbObj.conjugations[selectedTense][pronoun]) {
-        const correctAnswer = verbObj.conjugations[selectedTense][pronoun].toLowerCase();
+    
+    if (conjugations[verb] && conjugations[verb][pronoun]) {
+        const correctAnswer = conjugations[verb][pronoun].toLowerCase();
         
         if (userInput === correctAnswer) {
             resultDiv.innerHTML = '<div class="success">✓ Correct! You can make this attack.</div>';
-            cell.dataset.unlocked = 'true'; // Mark cell as unlocked
-            cell.dataset.state = gameState.currentAttackState; // Apply the chosen state
-            cell.classList.add(gameState.currentAttackState); // Apply the chosen class
+            cell.dataset.unlocked = 'true';
             setTimeout(() => {
                 closeModals();
             }, 1500);
         } else {
-            resultDiv.innerHTML = `<div class="error">✗ Incorrect. The correct answer is: <strong>${verbObj.conjugations[selectedTense][pronoun]}</strong></div>`;
+            resultDiv.innerHTML = `<div class="error">✗ Incorrect. The correct answer is: <strong>${conjugations[verb][pronoun]}</strong></div>`;
         }
     } else {
-        resultDiv.innerHTML = '<div class="error">Conjugation not available for this verb/tense/pronoun.</div>';
+        resultDiv.innerHTML = '<div class="error">Conjugation not available for this verb.</div>';
     }
 }
-
 
 function setAttackState(e) {
     // Remove active class from all buttons
@@ -734,16 +675,18 @@ function resetGame() {
 
         // Reset game state
         gameState.phase = 'placement';
-        resetShipsState(); // Reset ships to their initial state
+        gameState.ships = {
+            carrier: { size: 5, placed: false, position: null, orientation: 'horizontal' },
+            battleship: { size: 4, placed: false, position: null, orientation: 'horizontal' },
+            cruiser: { size: 3, placed: false, position: null, orientation: 'horizontal' },
+            submarine: { size: 3, placed: false, position: null, orientation: 'horizontal' },
+            destroyer: { size: 2, placed: false, position: null, orientation: 'horizontal' }
+        };
         gameState.ownBoard = {};
         gameState.attackBoard = {};
         gameState.currentAttackState = 'water';
         gameState.selectedShip = null;
         gameState.selectedOrientation = 'horizontal';
-        // Keep selectedVerbs and selectedTense as they were, or reset to default if preferred
-        // gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
-        // gameState.selectedTense = 'present';
-
 
         // Reset UI
         document.getElementById('ships-container').style.display = 'block';
@@ -757,7 +700,7 @@ function resetGame() {
         });
         highlightSelectedShip(null);
         
-        // Reset boards visuals
+        // Reset boards
         generateBoards();
         updateShipsRemaining();
         updateGamePhase();
@@ -769,28 +712,6 @@ function resetGame() {
         document.getElementById('water-btn').classList.add('active');
     }
 }
-
-function resetShipsState() {
-    gameState.ships = {
-        carrier: { size: 5, placed: false, position: null, orientation: 'horizontal' },
-        battleship: { size: 4, placed: false, position: null, orientation: 'horizontal' },
-        cruiser: { size: 3, placed: false, position: null, orientation: 'horizontal' },
-        submarine: { size: 3, placed: false, position: null, orientation: 'horizontal' },
-        destroyer: { size: 2, placed: false, position: null, orientation: 'horizontal' }
-    };
-    // Ensure all cells are reset visually
-    document.querySelectorAll('#own-board-grid .board-cell').forEach(cell => {
-        cell.classList.remove('ship-placed', 'ship-fixed', 'water', 'hit', 'sunk', 'ship-preview', 'valid');
-        delete cell.dataset.state; // Remove data-state to ensure clean slate
-    });
-    document.querySelectorAll('#attack-board-grid .board-cell').forEach(cell => {
-        cell.classList.remove('water', 'hit', 'sunk');
-        cell.classList.add('water'); // Default to water
-        cell.dataset.state = 'water';
-        delete cell.dataset.unlocked; // Remove unlocked state
-    });
-}
-
 
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
@@ -808,10 +729,6 @@ function showToast(message, type = 'info') {
         z-index: 1001;
         animation: slideIn 0.3s ease;
     `;
-    // Adjust background for error toasts
-    if (type === 'error') {
-        toast.style.background = 'linear-gradient(135deg, #d32f2f 0%, #f44336 100%)';
-    }
     document.body.appendChild(toast);
 
     setTimeout(() => {
@@ -821,10 +738,10 @@ function showToast(message, type = 'info') {
 
 function checkGameOver() {
     const allShipsSunk = Object.values(gameState.ships).every(ship => {
-        // A ship is considered "sunk" if it was placed and all its parts are marked as 'sunk'
-        if (!ship.placed || !ship.position) return false;
+        if (!ship.position) return false;
 
         return ship.position.every(pos => {
+            const key = `${pos.row},${pos.col}`;
             const cell = document.querySelector(
                 `#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`
             );
