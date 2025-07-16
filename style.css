@@ -318,9 +318,20 @@ header h1 {
 .btn-success:hover {
     background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 6px 20px rgba(27, 94, 32, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #666 !important;
+}
+
+.btn-disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .btn-state {
@@ -892,9 +903,28 @@ main {
 .ship.active {
     border-color: #81c784;
     background: linear-gradient(135deg, rgba(129, 199, 132, 0.2) 0%, rgba(129, 199, 132, 0.1) 100%);
-    box-shadow: 
+    box-shadow:
         0 0 20px rgba(129, 199, 132, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ship.ship-placed-ui {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(129, 199, 132, 0.3) 100%);
+    border-color: #4caf50;
+}
+
+.ship.ship-placed-ui:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.ship.ship-placed-ui .ship-name::after {
+    content: " \2713 PLACED";
+    color: #4caf50;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 .ship-name {
@@ -921,6 +951,22 @@ main {
 
 .rotate-btn:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.reset-ship-btn {
+    display: block;
+    margin: 0.3rem auto;
+    background: transparent;
+    border: 1px solid #ef5350;
+    color: #ef5350;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.reset-ship-btn:hover {
+    background: rgba(239, 83, 80, 0.1);
 }
 
 @keyframes slideIn {

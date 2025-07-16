@@ -46,7 +46,7 @@
         <div id="game-phase" class="game-phase">
             <span id="phase-text">Phase: Ship Placement</span>
             <div id="ship-placement-controls" class="ship-controls">
-                <button id="fix-ships-btn" class="btn btn-success">Fix Ships</button>
+                <button id="fix-ships-btn" class="btn btn-success btn-disabled" disabled>Fix Ships</button>
                 <div class="ship-counter">
                     <span>Ships to place: <span id="ships-remaining">5</span></span>
                 </div>
@@ -60,6 +60,7 @@
                     <div id="ship-carrier" class="ship selectable-ship" data-ship="carrier" data-size="5" data-orientation="horizontal">
                         <span class="ship-name">Carrier (5)</span>
                         <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
+                        <button class="reset-ship-btn" onclick="resetIndividualShip('carrier')">↺</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
@@ -71,6 +72,7 @@
                     <div id="ship-battleship" class="ship selectable-ship" data-ship="battleship" data-size="4" data-orientation="horizontal">
                         <span class="ship-name">Battleship (4)</span>
                         <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
+                        <button class="reset-ship-btn" onclick="resetIndividualShip('battleship')">↺</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
@@ -81,6 +83,7 @@
                     <div id="ship-cruiser" class="ship selectable-ship" data-ship="cruiser" data-size="3" data-orientation="horizontal">
                         <span class="ship-name">Cruiser (3)</span>
                         <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
+                        <button class="reset-ship-btn" onclick="resetIndividualShip('cruiser')">↺</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
@@ -90,6 +93,7 @@
                     <div id="ship-submarine" class="ship selectable-ship" data-ship="submarine" data-size="3" data-orientation="horizontal">
                         <span class="ship-name">Submarine (3)</span>
                         <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
+                        <button class="reset-ship-btn" onclick="resetIndividualShip('submarine')">↺</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
@@ -99,6 +103,7 @@
                     <div id="ship-destroyer" class="ship selectable-ship" data-ship="destroyer" data-size="2" data-orientation="horizontal">
                         <span class="ship-name">Destroyer (2)</span>
                         <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
+                        <button class="reset-ship-btn" onclick="resetIndividualShip('destroyer')">↺</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
