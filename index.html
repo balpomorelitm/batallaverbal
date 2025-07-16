@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="water-waves"></div>
     <header>
-        <h1>Spanish Conjugation Battleship</h1>
+        <h1>⚓ BATTLESHIP ARMADA ⚓</h1>
         <div class="game-controls">
             <button id="verb-selector-btn" class="btn btn-primary">Select Verbs</button>
             <button id="reset-game-btn" class="btn btn-secondary">Reset Game</button>
@@ -56,6 +57,7 @@
                 <div class="ships-list">
                     <div id="ship-carrier" class="ship selectable-ship" data-ship="carrier" data-size="5" data-orientation="horizontal">
                         <span class="ship-name">Carrier (5)</span>
+                        <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
@@ -63,43 +65,42 @@
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                         </div>
-                        <span class="rotate-icon">↻</span>
                     </div>
                     <div id="ship-battleship" class="ship selectable-ship" data-ship="battleship" data-size="4" data-orientation="horizontal">
                         <span class="ship-name">Battleship (4)</span>
+                        <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                         </div>
-                        <span class="rotate-icon">↻</span>
                     </div>
                     <div id="ship-cruiser" class="ship selectable-ship" data-ship="cruiser" data-size="3" data-orientation="horizontal">
                         <span class="ship-name">Cruiser (3)</span>
+                        <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                         </div>
-                        <span class="rotate-icon">↻</span>
                     </div>
                     <div id="ship-submarine" class="ship selectable-ship" data-ship="submarine" data-size="3" data-orientation="horizontal">
                         <span class="ship-name">Submarine (3)</span>
+                        <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                         </div>
-                        <span class="rotate-icon">↻</span>
                     </div>
                     <div id="ship-destroyer" class="ship selectable-ship" data-ship="destroyer" data-size="2" data-orientation="horizontal">
                         <span class="ship-name">Destroyer (2)</span>
+                        <button class="rotate-btn" onclick="rotateShip(this)">↻</button>
                         <div class="ship-visual">
                             <div class="ship-cell"></div>
                             <div class="ship-cell"></div>
                         </div>
-                        <span class="rotate-icon">↻</span>
                     </div>
                 </div>
             </div>
@@ -140,7 +141,7 @@
                 <!-- Attack Board -->
                 <div class="board-section">
                     <h2>Enemy Fleet</h2>
-                    <p class="board-tip">Tip: once a square is unlocked you can click again to change 💧 / 💥 / 💀 without re-entering a conjugation.</p>
+                    <p class="attack-tip">💡 Tip: Once unlocked, click squares to cycle through 💧 / 💥 / 💀</p>
                     <div class="board-wrapper">
                         <div id="attack-board" class="game-board">
                         <div class="board-header">
