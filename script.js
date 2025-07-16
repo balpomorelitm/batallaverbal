@@ -472,6 +472,7 @@ function checkIfShipSunk(type){
             cell.classList.remove('hit');
             cell.classList.add('sunk');
         });
+        checkGameOver();
     }
 }
 
@@ -622,4 +623,45 @@ function showToast(message, type = 'info') {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+function checkGameOver() {
+    const allShipsSunk = Object.values(gameState.ships).every(ship => {
+        if (!ship.position) return false;
+
+        return ship.position.every(pos => {
+            const key = `${pos.row},${pos.col}`;
+            const cell = document.querySelector(
+                `#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`
+            );
+            return cell && cell.dataset.state === 'sunk';
+        });
+    });
+
+    if (allShipsSunk) {
+        showGameOverMessage();
+    }
+}
+
+function showGameOverMessage() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content game-over-modal">
+            <div class="modal-header">
+                <h2>💀 GAME OVER 💀</h2>
+            </div>
+            <div class="modal-body">
+                <div class="game-over-message">
+                    <h3>You tried but you died!</h3>
+                    <p>Time to say <strong>Felicidades</strong> to your frenemy!</p>
+                    <button class="btn btn-primary" onclick="resetGame(); this.closest('.modal').remove();">
+                        Play Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
 }
