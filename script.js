@@ -202,6 +202,8 @@ function generateOwnBoard() {
             cell.dataset.row = rowIndex;
             cell.dataset.col = colIndex;
             cell.addEventListener('click', () => handleOwnBoardClick(cell));
+            cell.addEventListener('mouseenter', () => showShipPreview(cell));
+            cell.addEventListener('mouseleave', () => hideShipPreview());
             row.appendChild(cell);
         });
         
@@ -321,6 +323,40 @@ function removeShip(type) {
     });
     ship.position = null;
     ship.placed = false;
+}
+
+function showShipPreview(cell) {
+    if (gameState.phase !== 'placement' || !gameState.selectedShip) return;
+
+    const row = parseInt(cell.dataset.row);
+    const col = parseInt(cell.dataset.col);
+    const shipSize = gameState.ships[gameState.selectedShip].size;
+    const orientation = gameState.selectedOrientation;
+
+    const previewCells = [];
+    for (let i = 0; i < shipSize; i++) {
+        const previewRow = orientation === 'horizontal' ? row : row + i;
+        const previewCol = orientation === 'horizontal' ? col + i : col;
+        previewCells.push({ row: previewRow, col: previewCol });
+    }
+
+    const isValid = canPlaceShip(row, col, shipSize, orientation);
+
+    previewCells.forEach(pos => {
+        const previewCell = document.querySelector(
+            `#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`
+        );
+        if (previewCell) {
+            previewCell.classList.add('ship-preview');
+            if (isValid) previewCell.classList.add('valid');
+        }
+    });
+}
+
+function hideShipPreview() {
+    document.querySelectorAll('.ship-preview').forEach(cell => {
+        cell.classList.remove('ship-preview', 'valid');
+    });
 }
 
 function highlightSelectedShip(shipType) {
