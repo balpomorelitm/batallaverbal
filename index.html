@@ -22,12 +22,28 @@
         <div id="verb-modal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Select Verbs</h2>
+                    <h2>Verbs and Tenses</h2>
                     <span class="close">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="search-container">
                         <input type="text" id="verb-search" placeholder="Search verbs..." class="search-input">
+                    </div>
+                    <div class="tense-selection" style="margin-bottom: 1.5rem;">
+                        <label for="tense-select" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #e3f2fd;">Select Tense:</label>
+                        <select id="tense-select" class="search-input">
+                        </select>
+                    </div>
+                    <div class="irregularity-selection" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #e3f2fd;">Filter by Irregularity Type:</label>
+                        <div id="irregularity-options" style="display: flex; flex-wrap: wrap; gap: 0.8rem;">
+                        </div>
+                    </div>
+                    <div class="reflexive-filter" style="margin-bottom: 1.5rem;">
+                        <label>
+                            <input type="checkbox" id="filter-reflexive-verbs" style="transform: scale(1.3); accent-color: #42a5f5; margin-right: 0.5rem;">
+                            Show only reflexive verbs
+                        </label>
                     </div>
                     <div id="verb-list" class="verb-list">
                         <!-- Verbs will be populated by JavaScript -->

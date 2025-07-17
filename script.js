@@ -16,45 +16,116 @@ let gameState = {
     selectedOrientation: 'horizontal'
 };
 
-// Default verbs list
-const defaultVerbs = [
-    'hablar', 'comer', 'vivir', 'estudiar', 'trabajar', 'caminar', 'correr', 'escribir',
-    'leer', 'beber', 'ser', 'llamarse', 'tener', 'hacer', 'ir', 'venir', 'ver', 'dar',
-    'saber', 'querer', 'poder', 'decir', 'estar', 'poner', 'salir', 'volver', 'llegar',
-    'pasar', 'quedar', 'seguir', 'conocer', 'parecer', 'resultar', 'encontrar', 'llevar',
-    'traer', 'conseguir', 'sentir', 'dormir', 'morir', 'servir', 'vestir', 'pedir',
-    'repetir', 'mentir', 'preferir', 'divertir', 'convertir', 'advertir', 'sugerir'
-];
-
-// Basic conjugations for validation
-const conjugations = {
-    'hablar': { 'yo': 'hablo', 'tú': 'hablas', 'él/ella': 'habla', 'nosotros': 'hablamos', 'vosotros': 'habláis', 'ellos/ellas': 'hablan' },
-    'comer': { 'yo': 'como', 'tú': 'comes', 'él/ella': 'come', 'nosotros': 'comemos', 'vosotros': 'coméis', 'ellos/ellas': 'comen' },
-    'vivir': { 'yo': 'vivo', 'tú': 'vives', 'él/ella': 'vive', 'nosotros': 'vivimos', 'vosotros': 'vivís', 'ellos/ellas': 'viven' },
-    'estudiar': { 'yo': 'estudio', 'tú': 'estudias', 'él/ella': 'estudia', 'nosotros': 'estudiamos', 'vosotros': 'estudiáis', 'ellos/ellas': 'estudian' },
-    'trabajar': { 'yo': 'trabajo', 'tú': 'trabajas', 'él/ella': 'trabaja', 'nosotros': 'trabajamos', 'vosotros': 'trabajáis', 'ellos/ellas': 'trabajan' },
-    'caminar': { 'yo': 'camino', 'tú': 'caminas', 'él/ella': 'camina', 'nosotros': 'caminamos', 'vosotros': 'camináis', 'ellos/ellas': 'caminan' },
-    'correr': { 'yo': 'corro', 'tú': 'corres', 'él/ella': 'corre', 'nosotros': 'corremos', 'vosotros': 'corréis', 'ellos/ellas': 'corren' },
-    'escribir': { 'yo': 'escribo', 'tú': 'escribes', 'él/ella': 'escribe', 'nosotros': 'escribimos', 'vosotros': 'escribís', 'ellos/ellas': 'escriben' },
-    'leer': { 'yo': 'leo', 'tú': 'lees', 'él/ella': 'lee', 'nosotros': 'leemos', 'vosotros': 'leéis', 'ellos/ellas': 'leen' },
-    'beber': { 'yo': 'bebo', 'tú': 'bebes', 'él/ella': 'bebe', 'nosotros': 'bebemos', 'vosotros': 'bebéis', 'ellos/ellas': 'beben' },
-    'ser': { 'yo': 'soy', 'tú': 'eres', 'él/ella': 'es', 'nosotros': 'somos', 'vosotros': 'sois', 'ellos/ellas': 'son' },
-    'llamarse': { 'yo': 'me llamo', 'tú': 'te llamas', 'él/ella': 'se llama', 'nosotros': 'nos llamamos', 'vosotros': 'os llamáis', 'ellos/ellas': 'se llaman' }
-};
+let allVerbsData = []; // Will store verbs from verbos.json
+let currentConjugations = {}; // Conjugations for the currently selected tense
+let selectedTense = 'present';
+let selectedIrregularityTypes = new Set();
+let showReflexiveOnly = false;
 
 const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'];
 
-// Initialize the game
+function getUniqueTenses() {
+    const tenses = new Set();
+    allVerbsData.forEach(verb => {
+        Object.keys(verb.conjugations).forEach(tense => tenses.add(tense));
+    });
+    return Array.from(tenses).sort();
+}
+
+function getUniqueIrregularityTypes() {
+    const types = new Set();
+    allVerbsData.forEach(verb => {
+        Object.values(verb.types).flat().forEach(type => {
+            if (type !== 'regular' && type !== 'reflexive') {
+                types.add(type);
+            }
+        });
+    });
+    return Array.from(types).sort();
+}
+
+function populateTenseSelect() {
+    const tenseSelect = document.getElementById('tense-select');
+    if (!tenseSelect) return;
+    tenseSelect.innerHTML = '';
+    const tenses = getUniqueTenses();
+    tenses.forEach(tense => {
+        const option = document.createElement('option');
+        option.value = tense;
+        option.textContent = tense.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        tenseSelect.appendChild(option);
+    });
+    tenseSelect.value = selectedTense;
+    tenseSelect.addEventListener('change', (e) => {
+        selectedTense = e.target.value;
+        updateConjugationsForSelectedTense();
+        populateVerbModal();
+    });
+}
+
+function populateIrregularityOptions() {
+    const irregularityOptionsDiv = document.getElementById('irregularity-options');
+    if (!irregularityOptionsDiv) return;
+    irregularityOptionsDiv.innerHTML = '';
+    const irregularityTypes = getUniqueIrregularityTypes();
+
+    irregularityTypes.forEach(type => {
+        const label = document.createElement('label');
+        label.style.display = 'flex';
+        label.style.alignItems = 'center';
+        label.innerHTML = `
+            <input type="checkbox" value="${type}" ${selectedIrregularityTypes.has(type) ? 'checked' : ''} style="transform: scale(1.3); accent-color: #42a5f5; margin-right: 0.5rem;">
+            ${type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+        `;
+        const checkbox = label.querySelector('input');
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                selectedIrregularityTypes.add(e.target.value);
+            } else {
+                selectedIrregularityTypes.delete(e.target.value);
+            }
+            populateVerbModal();
+        });
+        irregularityOptionsDiv.appendChild(label);
+    });
+}
+
+function updateConjugationsForSelectedTense() {
+    currentConjugations = {};
+    allVerbsData.forEach(verb => {
+        if (verb.conjugations[selectedTense]) {
+            currentConjugations[verb.infinitive_es] = verb.conjugations[selectedTense];
+        }
+    });
+}
+
+// Initialize the game after loading verbs
 document.addEventListener('DOMContentLoaded', function() {
-    initializeGame();
-    setupEventListeners();
+    fetch('verbos.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            allVerbsData = data;
+            initializeGame();
+            setupEventListeners();
+        })
+        .catch(error => {
+            console.error('Error loading verbos.json:', error);
+            showToast('Failed to load verb data. Please refresh.', 'error');
+        });
 });
 
 function initializeGame() {
-    // Set default verbs
-    gameState.selectedVerbs = ['hablar', 'comer', 'vivir', 'estudiar', 'trabajar', 'caminar', 'correr', 'escribir', 'ser', 'llamarse'];
-    
-    // Initialize boards
+    // Set initial selected verbs (e.g., first 10 from loaded data)
+    gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
+
+    populateTenseSelect();
+    populateIrregularityOptions();
+    updateConjugationsForSelectedTense();
     generateBoards();
     updateSelectedVerbsDisplay();
     updateGamePhase();
@@ -85,6 +156,14 @@ function setupEventListeners() {
     
     // Verb search
     document.getElementById('verb-search').addEventListener('input', filterVerbs);
+
+    const reflexiveCheckbox = document.getElementById('filter-reflexive-verbs');
+    if (reflexiveCheckbox) {
+        reflexiveCheckbox.addEventListener('change', (e) => {
+            showReflexiveOnly = e.target.checked;
+            populateVerbModal();
+        });
+    }
     
     // Ship selection
     document.querySelectorAll('.ship').forEach(ship => {
@@ -116,8 +195,29 @@ function setupEventListeners() {
 function populateVerbModal() {
     const verbList = document.getElementById('verb-list');
     verbList.innerHTML = '';
-    
-    defaultVerbs.forEach(verb => {
+
+    const filteredVerbs = allVerbsData.filter(verb => {
+        if (!verb.conjugations[selectedTense]) return false;
+
+        let matchesIrregularity = true;
+        if (selectedIrregularityTypes.size > 0) {
+            const verbIrregularityTypes = Object.values(verb.types).flat();
+            matchesIrregularity = Array.from(selectedIrregularityTypes).every(type =>
+                verbIrregularityTypes.includes(type)
+            );
+        }
+        if (!matchesIrregularity) return false;
+
+        if (showReflexiveOnly) {
+            if (!Object.values(verb.types).flat().includes('reflexive')) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    filteredVerbs.forEach(verbData => {
+        const verb = verbData.infinitive_es;
         const verbItem = document.createElement('div');
         verbItem.className = 'verb-item';
         verbItem.innerHTML = `
@@ -339,43 +439,6 @@ function removeShip(type) {
     ship.placed = false;
 }
 
-function handleShipRelocation(shipType) {
-    if (!gameState.ships[shipType].placed) return;
-
-    // Remove ship from board
-    const positions = gameState.ships[shipType].position;
-    positions.forEach(pos => {
-        const key = `${pos.row},${pos.col}`;
-        delete gameState.ownBoard[key];
-
-        const cell = document.querySelector(`#own-board-grid .board-cell[data-row="${pos.row}"][data-col="${pos.col}"]`);
-        if (cell) {
-            cell.classList.remove('ship-placed');
-        }
-    });
-
-    // Reset ship state
-    gameState.ships[shipType].placed = false;
-    gameState.ships[shipType].position = null;
-
-    // Show ship in palette again
-    const shipElement = document.querySelector(`[data-ship="${shipType}"]`);
-    if (shipElement) shipElement.classList.remove('ship-placed-ui');
-
-    // Auto-select for replacement
-    gameState.selectedShip = shipType;
-    gameState.selectedOrientation = shipElement.dataset.orientation || 'horizontal';
-    highlightSelectedShip(shipType);
-
-    showToast(`${shipType} removed. Click on the board to place it again.`, 'info');
-    updateShipsRemaining();
-}
-
-function resetIndividualShip(shipType) {
-    if (gameState.ships[shipType].placed) {
-        handleShipRelocation(shipType);
-    }
-}
 
 function showShipPreview(cell) {
     if (gameState.phase !== 'placement' || !gameState.selectedShip) return;
@@ -630,9 +693,12 @@ function showAttackModal(cell) {
 function checkConjugation(cell, verb, pronoun) {
     const userInput = document.getElementById('conjugation').value.toLowerCase().trim();
     const resultDiv = document.getElementById('conjugation-result');
-    
-    if (conjugations[verb] && conjugations[verb][pronoun]) {
-        const correctAnswer = conjugations[verb][pronoun].toLowerCase();
+
+    const pronounMap = { 'él/ella': 'él', 'ellos/ellas': 'ellos' };
+    const dataPronoun = pronounMap[pronoun] || pronoun;
+
+    if (currentConjugations[verb] && currentConjugations[verb][dataPronoun]) {
+        const correctAnswer = currentConjugations[verb][dataPronoun].toLowerCase();
         
         if (userInput === correctAnswer) {
             resultDiv.innerHTML = '<div class="success">✓ Correct! You can make this attack.</div>';
@@ -641,10 +707,10 @@ function checkConjugation(cell, verb, pronoun) {
                 closeModals();
             }, 1500);
         } else {
-            resultDiv.innerHTML = `<div class="error">✗ Incorrect. The correct answer is: <strong>${conjugations[verb][pronoun]}</strong></div>`;
+            resultDiv.innerHTML = `<div class="error">✗ Incorrect. The correct answer is: <strong>${currentConjugations[verb][dataPronoun]}</strong></div>`;
         }
     } else {
-        resultDiv.innerHTML = '<div class="error">Conjugation not available for this verb.</div>';
+        resultDiv.innerHTML = '<div class="error">Conjugation not available for this verb in the selected tense.</div>';
     }
 }
 
