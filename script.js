@@ -420,13 +420,13 @@ function highlightSelectedShip(shipType) {
 function rotateShip(button) {
     const ship = button.closest('.ship');
     const visual = ship.querySelector('.ship-visual');
-    const currentOrientation = ship.dataset.orientation || 'horizontal';
+    const current = ship.dataset.orientation || 'horizontal';
 
-    if (currentOrientation === 'horizontal') {
-        ship.dataset.orientation = 'vertical';
+    ship.dataset.orientation = current === 'horizontal' ? 'vertical' : 'horizontal';
+
+    if (ship.dataset.orientation === 'vertical') {
         visual.classList.add('vertical');
     } else {
-        ship.dataset.orientation = 'horizontal';
         visual.classList.remove('vertical');
     }
 
