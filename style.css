@@ -1188,7 +1188,7 @@ main {
 /* Animated Ships Container Styles */
 #animated-ships-container {
     position: fixed;
-    bottom: 10vh; /* Position above waves; adjust based on wave height */
+    bottom: 20vh; /* Position above waves; adjust based on wave height */
     left: 0;
     width: 100%;
     height: 150px; /* Area where ships will appear */
@@ -1202,7 +1202,7 @@ main {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 25vh; /* Adjust height as needed for wave visibility */
+    height: 35vh; /* Adjust height as needed for wave visibility */
     z-index: 0; /* Behind content and ships */
     pointer-events: none; /* Allow clicks through */
 }
@@ -1232,7 +1232,7 @@ main {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    animation: shipSlide 25s linear forwards; /* Duración y tipo de animación */
+    animation: shipSlide 25s linear forwards, shipVerticalMotion 4s ease-in-out infinite; /* Duración y tipo de animación */
     opacity: 0.8; /* Ligeramente transparente para efecto de "dentro del agua" */
     filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
     bottom: 0;
@@ -1241,6 +1241,14 @@ main {
 @keyframes shipSlide {
     from { left: -150px; } /* Empieza fuera de la pantalla a la izquierda */
     to { left: calc(100vw + 150px); } /* Termina fuera de la pantalla a la derecha */
+}
+
+@keyframes shipVerticalMotion {
+    0% { transform: translateY(0px); }
+    25% { transform: translateY(-5px); }
+    50% { transform: translateY(0px); }
+    75% { transform: translateY(5px); }
+    100% { transform: translateY(0px); }
 }
 
 /* Responsive Design (asegúrate de mantener tus media queries existentes) */
