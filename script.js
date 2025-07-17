@@ -58,11 +58,9 @@ function createAnimatedShip() {
     const randomImage = shipImages[Math.floor(Math.random() * shipImages.length)];
     ship.style.backgroundImage = `url('${randomImage}')`;
 
-    // Posición vertical aleatoria
-    const viewportHeight = window.innerHeight;
-    const shipHeight = 50; // Ajusta según el 'height' de .animated-ship en CSS
-    const randomTop = Math.random() * (viewportHeight - shipHeight);
-    ship.style.top = `${randomTop}px`;
+    // Posición vertical aleatoria relativa al contenedor de olas
+    const randomBottomOffset = Math.random() * 50; // Adjust max offset as needed
+    ship.style.bottom = `${randomBottomOffset}px`; // Position relative to its container's bottom
 
     container.appendChild(ship);
 
