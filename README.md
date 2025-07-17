@@ -7,9 +7,8 @@
   - [Fase de Colocación de Barcos](#fase-de-colocación-de-barcos)
   - [Fase de Batalla](#fase-de-batalla)
 - [Tecnologías Usadas](#tecnologías-usadas)
-- [Demo en Vivo](#demo-en-vivo)
 - [Créditos](#créditos)
-- [Licencia](#licencia)
+
 
 ## Sobre el Proyecto
 **Batalla Naval** es un innovador juego interactivo diseñado para hacer el aprendizaje de la conjugación de verbos en español divertido y efectivo. Combina la estrategia del clásico juego de Batalla Naval con la práctica de gramática, donde cada ataque requiere conjugar un verbo correctamente. ¡Hunde la flota enemiga mientras dominas el español!
@@ -55,11 +54,9 @@
 * **JavaScript (ES6+)**: Lógica del juego, manejo del estado, manipulación del DOM, y gestión de datos de verbos.
 * **JSON**: Almacenamiento de datos de conjugación de verbos.
 
-## Juega, es gratis
-batallanaval.pablotorrado.site
 
 ## Créditos
-Desarrollado por [Tu Nombre/Usuario de GitHub] como proyecto de aprendizaje.
+Desarrollado por Pablo Torrado como proyecto de aprendizaje.
 Basado en datos de conjugación adaptados de recursos de aprendizaje de español.
 
 
