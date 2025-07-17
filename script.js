@@ -34,6 +34,52 @@ const TENSE_ORDER = [
 
 const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'];
 
+
+// --- NUEVO CÓDIGO PARA ANIMACIÓN DE BARCOS ---
+const shipImages = [
+    'assets/ship1.png', // Reemplaza con la ruta a tus imágenes de barcos
+    'assets/ship2.png',
+    'assets/ship3.png'
+    // Agrega más rutas de imágenes de barcos si tienes
+];
+let isShipAnimating = false; // Bandera para controlar que solo un barco se anime a la vez
+
+function createAnimatedShip() {
+    if (isShipAnimating || shipImages.length === 0) return;
+
+    isShipAnimating = true;
+    const container = document.getElementById('ship-animation-container');
+    const ship = document.createElement('div');
+    ship.classList.add('animated-ship');
+
+    // Selecciona una imagen de barco aleatoria
+    const randomImage = shipImages[Math.floor(Math.random() * shipImages.length)];
+    ship.style.backgroundImage = `url('${randomImage}')`;
+
+    // Posición vertical aleatoria
+    const viewportHeight = window.innerHeight;
+    const shipHeight = 50; // Ajusta según el 'height' de .animated-ship en CSS
+    const randomTop = Math.random() * (viewportHeight - shipHeight);
+    ship.style.top = `${randomTop}px`;
+
+    container.appendChild(ship);
+
+    // Elimina el barco una vez que la animación termina
+    ship.addEventListener('animationend', () => {
+        ship.remove();
+        isShipAnimating = false;
+        // Programa el siguiente barco después de un tiempo aleatorio
+        startShipAnimationLoop();
+    });
+}
+
+function startShipAnimationLoop() {
+    // Retraso aleatorio entre 5 y 15 segundos
+    const randomDelay = Math.random() * (15000 - 5000) + 5000;
+    setTimeout(createAnimatedShip, randomDelay);
+}
+// --- FIN NUEVO CÓDIGO ---
+
 function getUniqueTenses() {
     const tenses = new Set();
     allVerbsData.forEach(verb => {
@@ -164,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
             allVerbsData = data;
             initializeGame();
             setupEventListeners();
+            startShipAnimationLoop();
         })
         .catch(error => {
             console.error('Error loading verbos.json:', error);

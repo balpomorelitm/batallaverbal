@@ -7,168 +7,22 @@
     box-sizing: border-box;
 }
 
+
 body {
     font-family: 'Exo', sans-serif;
-    background: #0a1929;
+    background: url('image_f5f4e3.png') repeat-x; /* Usa tu imagen de olas aquí */
+    background-size: cover;
+    background-position: 0 0;
     min-height: 100vh;
     color: #e3f2fd;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Oculta el scroll horizontal */
     position: relative;
+    animation: waveBackground 60s linear infinite; /* Animación de desplazamiento lento */
 }
 
-/* Advanced Water Animation */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background:
-        radial-gradient(circle at 30% 20%, rgba(33, 150, 243, 0.8) 0%, transparent 50%),
-        radial-gradient(circle at 70% 80%, rgba(21, 101, 192, 0.8) 0%, transparent 50%),
-        radial-gradient(circle at 20% 60%, rgba(25, 118, 210, 0.6) 0%, transparent 50%),
-        radial-gradient(circle at 80% 40%, rgba(13, 71, 161, 0.6) 0%, transparent 50%),
-        linear-gradient(135deg, #0d47a1 0%, #1565c0 25%, #1976d2 50%, #2196f3 75%, #42a5f5 100%);
-    animation: oceanFlow 25s ease-in-out infinite;
-    z-index: -3;
-}
-
-@keyframes oceanFlow {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-        filter: hue-rotate(0deg);
-    }
-    25% {
-        transform: translate(-20px, -30px) scale(1.05);
-        filter: hue-rotate(10deg);
-    }
-    50% {
-        transform: translate(-10px, -20px) scale(0.95);
-        filter: hue-rotate(-5deg);
-    }
-    75% {
-        transform: translate(-30px, -10px) scale(1.02);
-        filter: hue-rotate(15deg);
-    }
-}
-
-/* Animated Wave Layers */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 120%;
-    height: 120%;
-    background:
-        repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 100px,
-            rgba(255, 255, 255, 0.02) 102px,
-            rgba(255, 255, 255, 0.02) 104px
-        ),
-        repeating-linear-gradient(
-            -45deg,
-            transparent,
-            transparent 80px,
-            rgba(100, 200, 255, 0.03) 82px,
-            rgba(100, 200, 255, 0.03) 84px
-        );
-    animation: wavePattern 30s linear infinite;
-    z-index: -2;
-}
-
-@keyframes wavePattern {
-    0% {
-        transform: translate(-10%, -10%) rotate(0deg);
-    }
-    50% {
-        transform: translate(-5%, -15%) rotate(1deg);
-    }
-    100% {
-        transform: translate(-10%, -10%) rotate(0deg);
-    }
-}
-
-/* Water Wave Effect */
-.water-waves {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: linear-gradient(to right, 
-        rgba(33, 150, 243, 0.3) 0%, 
-        rgba(100, 181, 246, 0.3) 50%, 
-        rgba(33, 150, 243, 0.3) 100%);
-    z-index: -1;
-}
-
-.water-waves::before,
-.water-waves::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 200%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 98px,
-        rgba(255, 255, 255, 0.1) 100px,
-        rgba(255, 255, 255, 0.1) 102px
-    );
-    animation: waveMove 15s linear infinite;
-}
-
-.water-waves::after {
-    animation-delay: -7.5s;
-}
-
-@keyframes waveMove {
-    0% {
-        transform: translateX(-50%);
-    }
-    100% {
-        transform: translateX(0%);
-    }
-}
-
-/* Surface Water Effect */
-.water-surface {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -1;
-}
-
-.water-surface::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 200%;
-    height: 100%;
-    background:
-        radial-gradient(ellipse at center, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    animation: surfaceRipple 20s ease-in-out infinite;
-}
-
-@keyframes surfaceRipple {
-    0%, 100% {
-        transform: translateX(-50%) scaleY(0.8);
-        opacity: 0.3;
-    }
-    50% {
-        transform: translateX(-25%) scaleY(1.2);
-        opacity: 0.1;
-    }
+@keyframes waveBackground {
+    from { background-position: 0 0; }
+    to { background-position: 100% 0; }
 }
 
 /* Header Styles */
@@ -1158,24 +1012,6 @@ main {
     font-weight: bold;
 }
 
-/* Add water waves to body */
-body {
-    position: relative;
-}
-
-body::after {
-    content: '';
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: linear-gradient(to right, 
-        rgba(33, 150, 243, 0.1) 0%, 
-        rgba(100, 181, 246, 0.1) 50%, 
-        rgba(33, 150, 243, 0.1) 100%);
-    z-index: -1;
-}
 
 /* Responsive Design */
 @media (max-width: 1200px) {
@@ -1346,3 +1182,43 @@ body::after {
     box-shadow: 0 0 20px rgba(66, 165, 245, 0.3);
 }
 
+
+/* Animated Ships Styles */
+#ship-animation-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Permite clics a través del contenedor */
+    z-index: 0; /* Asegura que esté por debajo del contenido del juego */
+}
+
+.animated-ship {
+    position: absolute;
+    width: 100px; /* Ajusta el tamaño del barco según tu imagen */
+    height: 50px; /* Ajusta el tamaño del barco según tu imagen */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: shipSlide 25s linear forwards; /* Duración y tipo de animación */
+    opacity: 0.8; /* Ligeramente transparente para efecto de "dentro del agua" */
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+}
+
+@keyframes shipSlide {
+    from { left: -150px; } /* Empieza fuera de la pantalla a la izquierda */
+    to { left: calc(100vw + 150px); } /* Termina fuera de la pantalla a la derecha */
+}
+
+/* Responsive Design (asegúrate de mantener tus media queries existentes) */
+@media (max-width: 768px) {
+    .animated-ship {
+        width: 70px; /* Ajusta el tamaño en pantallas pequeñas */
+        height: 35px;
+    }
+    @keyframes shipSlide {
+        from { left: -100px; }
+        to { left: calc(100vw + 100px); }
+    }
+}
