@@ -3063,7 +3063,7 @@
   "infinitive_es": "continuar",
   "infinitive_en": "to continue",
   "types": {
-    "present": ["accent_changes"],
+    "present": ["regular"],
     "present_perfect": ["regular"],
     "past_simple": ["regular"],
     "future_simple": ["regular"],
