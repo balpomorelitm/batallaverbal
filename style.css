@@ -801,6 +801,14 @@ main {
     font-size: 1.1rem;
 }
 
+.ship-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 0.5rem auto;
+    max-width: 120px;
+}
+
 .rotate-btn {
     display: block;
     margin: 0 auto 0.5rem auto;
