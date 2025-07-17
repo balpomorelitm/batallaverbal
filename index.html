@@ -276,8 +276,15 @@
     </div>
 
     <div id="wave-background">
-        <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="#1976d2" fill-opacity="1" d="M0,192L60,170.7C120,149,240,107,360,106.7C480,107,600,149,720,149.3C840,149,960,107,1080,106.7C1200,107,1320,149,1380,170.7L1440,192V320H0Z"></path>
+        <svg viewBox="0 0 2 1" preserveAspectRatio="none">
+            <defs>
+                <path id="w" d="m0 1v-.2 q.3.3 1 0 t1 0 1 0 1 1 v.3z" />
+            </defs>
+            <g>
+                <use href="#w" y=".0" fill="#2d55aa" />
+                <use href="#w" y=".1" fill="#3461c1" />
+                <use href="#w" y=".2" fill="#4579e2" />
+            </g>
         </svg>
     </div>
     <script src="script.js"></script>

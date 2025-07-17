@@ -10,19 +10,11 @@
 
 body {
     font-family: 'Exo', sans-serif;
-    background: url('image_f5f4e3.png') repeat-x; /* Usa tu imagen de olas aquí */
-    background-size: cover;
-    background-position: 0 0;
+    background-color: #123; /* Deep blue background for the sky/deep sea */
     min-height: 100vh;
     color: #e3f2fd;
-    overflow-x: hidden; /* Oculta el scroll horizontal */
+    overflow-x: hidden; /* Prevent horizontal scroll */
     position: relative;
-    animation: waveBackground 60s linear infinite; /* Animación de desplazamiento lento */
-}
-
-@keyframes waveBackground {
-    from { background-position: 0 0; }
-    to { background-position: 100% 0; }
 }
 
 /* Header Styles */
@@ -1193,29 +1185,44 @@ main {
 
 
 /* Animated Ships Styles */
+/* Animated Ships Container Styles */
 #animated-ships-container {
     position: fixed;
-    top: 0;
+    bottom: 10vh; /* Position above waves; adjust based on wave height */
     left: 0;
     width: 100%;
-    height: 100%;
-    pointer-events: none; /* Permite clics a través del contenedor */
-    z-index: 0; /* Asegura que esté por debajo del contenido del juego */
+    height: 150px; /* Area where ships will appear */
+    pointer-events: none;
+    z-index: 1; /* Above waves, below content */
 }
 
-/* Wave Background */
+/* New Wave Background Styles */
 #wave-background {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    pointer-events: none;
-    z-index: -1;
+    height: 25vh; /* Adjust height as needed for wave visibility */
+    z-index: 0; /* Behind content and ships */
+    pointer-events: none; /* Allow clicks through */
 }
 #wave-background svg {
-    display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+}
+#wave-background use {
+    animation: move-forever 15s linear infinite;
+}
+#wave-background use:nth-child(2) {
+    animation-duration: 30s;
+    animation-delay: -10s;
+}
+#wave-background use:nth-child(1) {
+    animation-duration: 40s;
+}
+@keyframes move-forever {
+    0% { transform: translate(-2px, 0); }
+    100% { transform: translate(0px, 0); }
 }
 
 .animated-ship {
@@ -1228,6 +1235,7 @@ main {
     animation: shipSlide 25s linear forwards; /* Duración y tipo de animación */
     opacity: 0.8; /* Ligeramente transparente para efecto de "dentro del agua" */
     filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+    bottom: 0;
 }
 
 @keyframes shipSlide {
