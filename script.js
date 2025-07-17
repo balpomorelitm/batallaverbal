@@ -256,6 +256,24 @@ function setupEventListeners() {
     
     // Reset game
     document.getElementById('reset-game-btn').addEventListener('click', resetGame);
+
+    // NEW: Event listener for Copy Verb List button
+    const copyBtn = document.getElementById('copy-verbs-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', copyVerbsToClipboard);
+    }
+
+    // NEW: Event listener for New Custom Game button
+    const newCustomBtn = document.getElementById('new-custom-game-btn');
+    if (newCustomBtn) {
+        newCustomBtn.addEventListener('click', openCustomGameModal);
+    }
+
+    // NEW: Event listener for Start Custom Game button inside the modal
+    const startCustomBtn = document.getElementById('start-custom-game-btn');
+    if (startCustomBtn) {
+        startCustomBtn.addEventListener('click', startCustomGame);
+    }
     
     // Verb search
     document.getElementById('verb-search').addEventListener('input', filterVerbs);
@@ -387,6 +405,82 @@ function updateSelectedVerbsDisplay() {
         const count = gameState.selectedVerbs.length;
         heading.textContent = `${count} Verb${count === 1 ? '' : 's'} Selected`;
     }
+}
+
+function copyVerbsToClipboard() {
+    if (gameState.selectedVerbs.length === 0) {
+        showToast('No verbs selected to copy!', 'info');
+        return;
+    }
+    const verbsCsv = gameState.selectedVerbs.join(',');
+    navigator.clipboard.writeText(verbsCsv).then(() => {
+        showToast('Verb list copied to clipboard!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        showToast('Failed to copy verb list.', 'error');
+    });
+}
+
+function openCustomGameModal() {
+    const customGameModal = document.getElementById('custom-game-modal');
+    const customTenseSelect = document.getElementById('custom-tense-select');
+    customTenseSelect.innerHTML = '';
+
+    let tenses = getUniqueTenses();
+    tenses.sort((a, b) => {
+        const indexA = TENSE_ORDER.indexOf(a);
+        const indexB = TENSE_ORDER.indexOf(b);
+        if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+    });
+
+    tenses.forEach(tense => {
+        const option = document.createElement('option');
+        option.value = tense;
+        option.textContent = tense.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        customTenseSelect.appendChild(option);
+    });
+
+    customTenseSelect.value = selectedTense;
+
+    document.getElementById('custom-verbs-input').value = gameState.selectedVerbs.join(',');
+    customGameModal.style.display = 'block';
+}
+
+function startCustomGame() {
+    const verbsInput = document.getElementById('custom-verbs-input').value.trim();
+    const newTense = document.getElementById('custom-tense-select').value;
+
+    if (!verbsInput) {
+        showToast('Please enter verbs for the custom game.', 'error');
+        return;
+    }
+
+    const newVerbs = verbsInput.split(',').map(v => v.trim()).filter(v => v);
+
+    const validVerbs = allVerbsData.map(v => v.infinitive_es);
+    const invalidVerbs = newVerbs.filter(verb => !validVerbs.includes(verb));
+
+    if (invalidVerbs.length > 0) {
+        showToast(`The following verbs are not valid: ${invalidVerbs.join(', ')}. Please use verbs from the game's dictionary.`, 'error');
+        return;
+    }
+
+    resetGame(false);
+
+    gameState.selectedVerbs = newVerbs;
+    selectedTense = newTense;
+
+    updateConjugationsForSelectedTense();
+    generateBoards();
+    updateSelectedVerbsDisplay();
+    populateIrregularityOptions();
+    populateVerbModal();
+
+    closeModals();
+    showToast('Custom game started!', 'success');
 }
 
 function generateBoards() {
@@ -838,8 +932,13 @@ function setAttackState(e) {
     gameState.currentAttackState = e.target.dataset.state;
 }
 
-function resetGame() {
-    if (confirm('Are you sure you want to reset the game?')) {
+function resetGame(confirmReset = true) {
+    let proceed = true;
+    if (confirmReset) {
+        proceed = confirm('Are you sure you want to reset the game?');
+    }
+
+    if (proceed) {
         // Reset all ships to unplaced state
         Object.keys(gameState.ships).forEach(shipType => {
             gameState.ships[shipType].placed = false;
@@ -877,11 +976,26 @@ function resetGame() {
         });
         highlightSelectedShip(null);
         
-        // Reset boards
+        // Restore default selected verbs and tense if performing a full reset
+        if (confirmReset) {
+            if (allVerbsData.length > 0) {
+                gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
+            } else {
+                console.warn("allVerbsData not loaded yet during reset, using empty verb list.");
+                gameState.selectedVerbs = [];
+            }
+            selectedTense = 'present';
+            populateTenseSelect();
+            updateConjugationsForSelectedTense();
+            populateIrregularityOptions();
+            populateVerbModal();
+        }
+
+        // Regenerate boards after state reset
         generateBoards();
         updateShipsRemaining();
         updateGamePhase();
-        
+
         // Reset attack state buttons
         document.querySelectorAll('.btn-state').forEach(btn => {
             btn.classList.remove('active');
