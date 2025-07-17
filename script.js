@@ -37,10 +37,12 @@ const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'
 
 // --- NUEVO CÓDIGO PARA ANIMACIÓN DE BARCOS ---
 const shipImages = [
-    'assets/ship1.png', // Reemplaza con la ruta a tus imágenes de barcos
-    'assets/ship2.png',
-    'assets/ship3.png'
-    // Agrega más rutas de imágenes de barcos si tienes
+    // Utiliza las imágenes reales del directorio "images"
+    'images/barco1.png',
+    'images/barco2.png',
+    'images/barco3.png',
+    'images/barco4.png',
+    'images/barco5.png'
 ];
 let isShipAnimating = false; // Bandera para controlar que solo un barco se anime a la vez
 
