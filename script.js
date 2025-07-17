@@ -647,7 +647,7 @@ function updateGamePhase() {
         if (enemyBoard) enemyBoard.classList.add('hidden');
     } else {
         phaseText.textContent = 'Phase: Battle';
-        turnInfo.textContent = 'Attack enemy positions by clicking their board';
+        turnInfo.textContent = 'Attack enemy positions by clicking their board anc conjugating. Then marc your board as your enemy attacks you.';
         if (enemyBoard) enemyBoard.classList.remove('hidden');
     }
 }
