@@ -364,6 +364,9 @@ main {
     margin: 0 auto;
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Modal Styles */
@@ -570,6 +573,8 @@ main {
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     margin-bottom: 2rem;
+    justify-items: center;
+    align-items: start;
 }
 
 /* Layout for the two boards */
@@ -577,6 +582,8 @@ main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    justify-items: center;
+    align-items: start;
 }
 
 .boards-wrapper .board-legend,
@@ -590,11 +597,13 @@ main {
         rgba(42, 82, 152, 0.9) 100%);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 
+    box-shadow:
         0 10px 30px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(66, 165, 245, 0.3);
     backdrop-filter: blur(10px);
+    width: 100%;
+    margin: 0 auto;
 }
 
 .board-section.enemy-board.hidden {
@@ -1194,10 +1203,12 @@ body::after {
     .boards-container {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        justify-items: center;
     }
 
     .boards-wrapper {
         grid-template-columns: 1fr;
+        justify-items: center;
     }
     
     .game-info {
