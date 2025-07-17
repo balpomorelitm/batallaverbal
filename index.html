@@ -205,7 +205,14 @@
             <div class="info-section">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                     <h3 id="selected-verbs-heading">Selected Verbs</h3>
-                    <button id="copy-verbs-btn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.8rem;">Copy List</button>
+                    <div class="tooltip-container">
+                        <button id="copy-verbs-btn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.8rem;">Copy List</button>
+                        <span class="tooltip-trigger" tabindex="0" role="button" aria-describedby="copy-list-tooltip-content">?</span>
+                        <div class="tooltip-content" id="copy-list-tooltip-content">
+                            <p>Copia la lista de verbos en el orden actual. Puedes compartirla con un compañero para que ambos jueguen con los mismos verbos y en el mismo orden. Tu compañero puede pegar la lista al iniciar un "New Custom Game".</p>
+                            <div class="tooltip-arrow"></div>
+                        </div>
+                    </div>
                 </div>
                 <div id="selected-verbs" class="selected-verbs-display">
                     <!-- Selected verbs will be shown here -->
