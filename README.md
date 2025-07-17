@@ -62,4 +62,4 @@ batallanaval.pablotorrado.site
 Desarrollado por [Tu Nombre/Usuario de GitHub] como proyecto de aprendizaje.
 Basado en datos de conjugación adaptados de recursos de aprendizaje de español.
 
-Este proyecto está licenciado bajo la [Licencia MIT](LICENSE) - consulta el archivo `LICENSE` para más detalles.
+
