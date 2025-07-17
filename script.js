@@ -21,6 +21,7 @@ let currentConjugations = {}; // Conjugations for the currently selected tense
 let selectedTense = 'present';
 let selectedIrregularityTypes = new Set();
 let showReflexiveOnly = false;
+let showRegularVerbs = true;
 
 // Order of tenses from easiest to hardest for dropdown
 const TENSE_ORDER = [
@@ -142,6 +143,21 @@ function populateIrregularityOptions() {
     const irregularityOptionsDiv = document.getElementById('irregularity-options');
     if (!irregularityOptionsDiv) return;
     irregularityOptionsDiv.innerHTML = '';
+
+    // Regular verbs checkbox (always first)
+    const regularLabel = document.createElement('label');
+    regularLabel.style.display = 'flex';
+    regularLabel.style.alignItems = 'center';
+    regularLabel.innerHTML = `
+        <input type="checkbox" id="filter-regular-verbs" ${showRegularVerbs ? 'checked' : ''} style="transform: scale(1.3); accent-color: #42a5f5; margin-right: 0.5rem;">
+        Regular
+    `;
+    const regularCheckbox = regularLabel.querySelector('input');
+    regularCheckbox.addEventListener('change', (e) => {
+        showRegularVerbs = e.target.checked;
+        populateVerbModal();
+    });
+    irregularityOptionsDiv.appendChild(regularLabel);
 
     const relevantIrregularityTypes = new Set();
 
@@ -346,6 +362,12 @@ function populateVerbModal() {
         // Filter by reflexive only if requested
         if (showReflexiveOnly) {
             if (!Array.isArray(verb.types[selectedTense]) || !verb.types[selectedTense].includes('reflexive')) {
+                return false;
+            }
+        }
+
+        if (!showRegularVerbs) {
+            if (Array.isArray(verb.types[selectedTense]) && verb.types[selectedTense].includes('regular')) {
                 return false;
             }
         }
