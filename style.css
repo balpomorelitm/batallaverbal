@@ -1193,7 +1193,7 @@ main {
 
 
 /* Animated Ships Styles */
-#ship-animation-container {
+#animated-ships-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -1201,6 +1201,21 @@ main {
     height: 100%;
     pointer-events: none; /* Permite clics a través del contenedor */
     z-index: 0; /* Asegura que esté por debajo del contenido del juego */
+}
+
+/* Wave Background */
+#wave-background {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+#wave-background svg {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .animated-ship {

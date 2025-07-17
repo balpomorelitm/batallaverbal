@@ -50,7 +50,7 @@ function createAnimatedShip() {
     if (isShipAnimating || shipImages.length === 0) return;
 
     isShipAnimating = true;
-    const container = document.getElementById('ship-animation-container');
+    const container = document.getElementById('animated-ships-container');
     const ship = document.createElement('div');
     ship.classList.add('animated-ship');
 
