@@ -962,29 +962,7 @@ main {
     background: rgba(255, 255, 255, 0.1);
 }
 
-.reset-ship-btn {
-    display: block;
-    margin: 0.3rem auto;
-    background: transparent;
-    border: 1px solid #ef5350;
-    color: #ef5350;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 0.2rem 0.5rem;
-    transition: background 0.3s ease;
-}
 
-.reset-ship-btn:hover {
-    background: rgba(239, 83, 80, 0.1);
-}
-
-/* Ship Images */
-.ship img {
-    display: block;
-    margin: 0.5rem auto;
-    max-width: 100%;
-    height: auto;
-}
 
 @keyframes slideIn {
     from {
