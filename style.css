@@ -1301,7 +1301,7 @@ main {
     bottom: 10vh; 
     left: 0;
     width: 100%;
-    height: 75px; /* Area where ships will appear */
+    height: 50px; /* Area where ships will appear */
     pointer-events: none;
     z-index: 1; /* Above waves, below content */
 }
