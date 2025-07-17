@@ -231,6 +231,11 @@ function initializeGame() {
 }
 
 function setupEventListeners() {
+    // NEW: Event listener for How to Play button
+    document.getElementById('how-to-play-btn').addEventListener('click', function() {
+        document.getElementById('instructions-modal').style.display = 'block';
+    });
+
     // Verb selection
     document.getElementById('verb-selector-btn').addEventListener('click', openVerbModal);
     document.getElementById('apply-verbs-btn').addEventListener('click', applyVerbSelection);
