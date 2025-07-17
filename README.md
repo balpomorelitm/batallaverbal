@@ -55,8 +55,8 @@
 * **JavaScript (ES6+)**: Lógica del juego, manejo del estado, manipulación del DOM, y gestión de datos de verbos.
 * **JSON**: Almacenamiento de datos de conjugación de verbos.
 
-## Demo en Vivo
-Puedes probar el juego en vivo aquí: [Enlace a tu demo en vivo (si tienes uno, si no, puedes eliminar esta sección)]()
+## Juega, es gratis
+batallanaval.pablotorrado.site
 
 ## Créditos
 Desarrollado por [Tu Nombre/Usuario de GitHub] como proyecto de aprendizaje.
