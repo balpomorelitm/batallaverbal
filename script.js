@@ -376,6 +376,12 @@ function applyVerbSelection() {
 function updateSelectedVerbsDisplay() {
     const display = document.getElementById('selected-verbs');
     display.innerHTML = gameState.selectedVerbs.map(verb => `<span class="verb-tag">${verb}</span>`).join('');
+
+    const heading = document.getElementById('selected-verbs-heading');
+    if (heading) {
+        const count = gameState.selectedVerbs.length;
+        heading.textContent = `${count} Verb${count === 1 ? '' : 's'} Selected`;
+    }
 }
 
 function generateBoards() {
