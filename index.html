@@ -13,6 +13,7 @@
         <div class="game-controls">
             <button id="how-to-play-btn" class="btn btn-secondary">How to Play</button>
             <button id="verb-selector-btn" class="btn btn-primary">SELECT TENSE AND VERBS</button>
+            <button id="new-custom-game-btn" class="btn btn-primary" title="Start a game with a custom verb list">New Custom Game</button>
             <button id="reset-game-btn" class="btn btn-secondary">Reset Game</button>
         </div>
     </header>
@@ -202,7 +203,10 @@
                 <p id="turn-info">Place your ships on the board</p>
             </div>
             <div class="info-section">
-                <h3 id="selected-verbs-heading">Selected Verbs</h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <h3 id="selected-verbs-heading">Selected Verbs</h3>
+                    <button id="copy-verbs-btn" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 0.8rem;">Copy List</button>
+                </div>
                 <div id="selected-verbs" class="selected-verbs-display">
                     <!-- Selected verbs will be shown here -->
                 </div>
@@ -271,6 +275,29 @@
                     <button id="check-conjugation-btn" class="btn btn-primary">Check</button>
                 </div>
                 <div id="conjugation-result" class="conjugation-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-game-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Custom Game</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="conjugation-input">
+                    <label for="custom-verbs-input">Paste verb list (comma-separated):</label>
+                    <textarea id="custom-verbs-input" class="search-input" rows="5" placeholder="e.g., comer,hablar,vivir,estudiar"></textarea>
+                </div>
+                <div class="tense-selection" style="margin-bottom: 1.5rem;">
+                    <label for="custom-tense-select" style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #e3f2fd;">Select Tense for Custom Game:</label>
+                    <select id="custom-tense-select" class="search-input"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="start-custom-game-btn" class="btn btn-primary">Start Custom Game</button>
+                <button class="btn btn-secondary close">Cancel</button>
             </div>
         </div>
     </div>
