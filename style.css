@@ -1298,10 +1298,10 @@ main {
 
 #animated-ships-container {
     position: fixed;
-    bottom: 10vh; 
+    bottom: 10vh;
     left: 0;
     width: 100%;
-    height: 50px; /* Area where ships will appear */
+    height: 150px; /* Area where ships will appear */
     pointer-events: none;
     z-index: 1; /* Above waves, below content */
 }
@@ -1337,8 +1337,8 @@ main {
 
 .animated-ship {
     position: absolute;
-    width: 100px; /* Ajusta el tamaño del barco según tu imagen */
-    height: 50px; /* Ajusta el tamaño del barco según tu imagen */
+    width: 300px; /* Ajusta el tamaño del barco según tu imagen */
+    height: 150px; /* Ajusta el tamaño del barco según tu imagen */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -1349,8 +1349,8 @@ main {
 }
 
 @keyframes shipSlide {
-    from { left: -150px; } /* Empieza fuera de la pantalla a la izquierda */
-    to { left: calc(100vw + 150px); } /* Termina fuera de la pantalla a la derecha */
+    from { left: -450px; } /* Empieza fuera de la pantalla a la izquierda */
+    to { left: calc(100vw + 450px); } /* Termina fuera de la pantalla a la derecha */
 }
 
 @keyframes shipVerticalMotion {
@@ -1364,12 +1364,12 @@ main {
 /* Responsive Design (asegúrate de mantener tus media queries existentes) */
 @media (max-width: 768px) {
     .animated-ship {
-        width: 70px; /* Ajusta el tamaño en pantallas pequeñas */
-        height: 35px;
+        width: 210px; /* Ajusta el tamaño en pantallas pequeñas */
+        height: 105px;
     }
     @keyframes shipSlide {
-        from { left: -100px; }
-        to { left: calc(100vw + 100px); }
+        from { left: -300px; }
+        to { left: calc(100vw + 300px); }
     }
 }
 
