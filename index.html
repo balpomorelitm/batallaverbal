@@ -10,6 +10,7 @@
     <header>
         <h1>⚓ BATALLA DE BARCOS ⚓</h1>
         <div class="game-controls">
+            <button id="how-to-play-btn" class="btn btn-secondary">How to Play</button>
             <button id="verb-selector-btn" class="btn btn-primary">SELECT TENSE AND VERBS</button>
             <button id="reset-game-btn" class="btn btn-secondary">Reset Game</button>
         </div>
@@ -205,8 +206,49 @@
                     <!-- Selected verbs will be shown here -->
                 </div>
             </div>
+
         </div>
     </main>
+
+    <div id="instructions-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>How to Play</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>Game Phases:</h3>
+                <h4>1. Ship Placement Phase:</h4>
+                <ul>
+                    <li>You must place 5 ships (Carrier: 5 cells, Battleship: 4 cells, Cruiser: 3 cells, Submarine: 3 cells, Destroyer: 2 cells) on your board.</li>
+                    <li>Select a ship from the "Ships to Place" panel.</li>
+                    <li>Click on a starting cell on "My Fleet" board. The selected ship will appear.</li>
+                    <li>You can rotate the ship between horizontal and vertical orientation using the blue rotate button (`↻`).</li>
+                    <li>Ships cannot touch each other, even diagonally. If you try to place a ship touching another, you will receive an error.</li>
+                    <li>Once all 5 ships are placed, the "Fix Ships" button will become active. Click it to lock in your ship positions and proceed to the Battle Phase.</li>
+                </ul>
+
+                <h4>2. Battle Phase:</h4>
+                <ul>
+                    <li>In this phase, you will attack the "Enemy Fleet" board.</li>
+                    <li>Click on any cell on the "Enemy Fleet" board to target it.</li>
+                    <li>An "Attack Position" modal will appear, showing the verb and pronoun associated with that cell.</li>
+                    <li>To make your attack, you must correctly conjugate the displayed verb for the given pronoun in the present tense (or the currently selected tense).</li>
+                    <li>If your conjugation is correct, the cell will be "unlocked," and you can then mark its state.</li>
+                    <li>Once a cell is unlocked, click it repeatedly to cycle through attack states: 💧 (Water/Miss), 💥 (Hit), 💀 (Sunk).</li>
+                    <li>Your goal is to mark all enemy ship positions as "Hit" or "Sunk."</li>
+                    <li>If all parts of an enemy ship are marked "Hit," that ship is considered "Sunk."</li>
+                    <li>The game ends when all of your ships on "My Fleet" board are "Sunk" or all enemy ships are "Sunk".</li>
+                </ul>
+
+                <h3>Tips:</h3>
+                <ul>
+                    <li>Use the "Select Verbs" button to choose which verbs you want to practice. You can filter by tense, irregularity, and reflexivity.</li>
+                    <li>You can use the "Reset Game" button to start a new game at any time.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <!-- Attack Modal -->
     <div id="attack-modal" class="modal">
