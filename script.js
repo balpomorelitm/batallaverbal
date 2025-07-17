@@ -725,6 +725,7 @@ function showAttackModal(cell) {
     document.getElementById('attack-position').textContent = position;
     document.getElementById('attack-verb').textContent = verb;
     document.getElementById('attack-pronoun').textContent = pronoun;
+    document.getElementById('attack-tense').textContent = selectedTense.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     document.getElementById('conjugation').value = '';
     document.getElementById('conjugation-result').innerHTML = '';
     
