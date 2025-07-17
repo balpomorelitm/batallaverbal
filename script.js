@@ -218,6 +218,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
+/**
+ * Calculates the offset from the start of the ship to its "anchor" cell.
+ * The anchor cell is the one that aligns with the mouse pointer during placement.
+ * @param {string} shipType - The type of ship (e.g., 'carrier', 'battleship').
+ * @returns {number} The 0-indexed offset for the anchor cell.
+ */
+function getShipAnchorOffset(shipType) {
+    const shipSize = gameState.ships[shipType].size;
+    switch (shipType) {
+        case 'destroyer': // Size 2, user wants first cell as anchor (offset 0)
+            return 0;
+        case 'battleship': // Size 4, user wants second cell as anchor (offset 1)
+            return 1;
+        default: // Carrier (5), Cruiser (3), Submarine (3) - center cell
+            return Math.floor(shipSize / 2);
+    }
+}
+
 function initializeGame() {
     // Set initial selected verbs (e.g., first 10 from loaded data)
     gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
@@ -647,19 +665,43 @@ function removeShip(type) {
 function showShipPreview(cell) {
     if (gameState.phase !== 'placement' || !gameState.selectedShip) return;
 
-    const row = parseInt(cell.dataset.row);
-    const col = parseInt(cell.dataset.col);
-    const shipSize = gameState.ships[gameState.selectedShip].size;
+    const clickedRow = parseInt(cell.dataset.row);
+    const clickedCol = parseInt(cell.dataset.col);
+    const shipType = gameState.selectedShip;
+    const shipSize = gameState.ships[shipType].size;
     const orientation = gameState.selectedOrientation;
+    const anchorOffset = getShipAnchorOffset(shipType); // Get the anchor offset
+
+    let startRow, startCol;
+
+    if (orientation === 'horizontal') {
+        startRow = clickedRow;
+        startCol = clickedCol - anchorOffset; // Adjust start column based on offset
+    } else { // vertical
+        startRow = clickedRow - anchorOffset; // Adjust start row based on offset
+        startCol = clickedCol;
+    }
+
+    let isValid = canPlaceShip(startRow, startCol, shipSize, orientation);
 
     const previewCells = [];
     for (let i = 0; i < shipSize; i++) {
-        const previewRow = orientation === 'horizontal' ? row : row + i;
-        const previewCol = orientation === 'horizontal' ? col + i : col;
-        previewCells.push({ row: previewRow, col: previewCol });
+        const previewRow = orientation === 'horizontal' ? startRow : startRow + i;
+        const previewCol = orientation === 'horizontal' ? startCol + i : startCol;
+
+        if (
+            previewRow >= 0 &&
+            previewRow < gameState.selectedVerbs.length &&
+            previewCol >= 0 &&
+            previewCol < pronouns.length
+        ) {
+            previewCells.push({ row: previewRow, col: previewCol });
+        } else {
+            isValid = false; // Out of bounds
+        }
     }
 
-    const isValid = canPlaceShip(row, col, shipSize, orientation);
+    document.querySelectorAll('.ship-preview').forEach(c => c.classList.remove('ship-preview', 'valid'));
 
     previewCells.forEach(pos => {
         const previewCell = document.querySelector(
@@ -667,9 +709,17 @@ function showShipPreview(cell) {
         );
         if (previewCell) {
             previewCell.classList.add('ship-preview');
-            if (isValid) previewCell.classList.add('valid');
+            if (isValid) {
+                previewCell.classList.add('valid');
+            } else {
+                previewCell.classList.remove('valid');
+            }
         }
     });
+
+    if (!isValid) {
+        document.querySelectorAll('.ship-preview').forEach(c => c.classList.remove('valid'));
+    }
 }
 
 function hideShipPreview() {
@@ -758,8 +808,8 @@ function updateGamePhase() {
 }
 
 function handleOwnBoardClick(cell) {
-    const row = parseInt(cell.dataset.row);
-    const col = parseInt(cell.dataset.col);
+    const clickedRow = parseInt(cell.dataset.row);
+    const clickedCol = parseInt(cell.dataset.col);
 
     if (gameState.phase === 'placement') {
         if (!gameState.selectedShip) {
@@ -776,22 +826,34 @@ function handleOwnBoardClick(cell) {
         }
 
         const shipSize = gameState.ships[shipType].size;
+        const orientation = gameState.selectedOrientation;
+        const anchorOffset = getShipAnchorOffset(shipType);
 
-        if (canPlaceShip(row, col, shipSize, gameState.selectedOrientation)) {
-            placeShip(row, col, {
+        let startRow, startCol;
+
+        if (orientation === 'horizontal') {
+            startRow = clickedRow;
+            startCol = clickedCol - anchorOffset;
+        } else { // vertical
+            startRow = clickedRow - anchorOffset;
+            startCol = clickedCol;
+        }
+
+        if (canPlaceShip(startRow, startCol, shipSize, orientation)) {
+            placeShip(startRow, startCol, {
                 type: shipType,
                 size: shipSize
             });
             updateShipsRemaining();
         } else {
-            showToast("You can't place your boats next to each other", 'error');
+            showToast("You can't place your boats next to each other or out of bounds.", 'error');
         }
         return;
     }
 
     if (gameState.phase !== 'battle') return;
 
-    const key = `${row},${col}`;
+    const key = `${clickedRow},${clickedCol}`;
     const hasShip = !!gameState.ownBoard[key];
 
     if (!hasShip) {
