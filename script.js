@@ -22,6 +22,16 @@ let selectedTense = 'present';
 let selectedIrregularityTypes = new Set();
 let showReflexiveOnly = false;
 
+// Order of tenses from easiest to hardest for dropdown
+const TENSE_ORDER = [
+    "present",
+    "present_perfect",
+    "past_simple",
+    "future_simple",
+    "condicional_simple",
+    "imperfect_indicative"
+];
+
 const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'];
 
 function getUniqueTenses() {
@@ -48,28 +58,70 @@ function populateTenseSelect() {
     const tenseSelect = document.getElementById('tense-select');
     if (!tenseSelect) return;
     tenseSelect.innerHTML = '';
-    const tenses = getUniqueTenses();
+    let tenses = getUniqueTenses();
+
+    // Sort tenses based on predefined order
+    tenses.sort((a, b) => {
+        const indexA = TENSE_ORDER.indexOf(a);
+        const indexB = TENSE_ORDER.indexOf(b);
+        if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+    });
+
     tenses.forEach(tense => {
         const option = document.createElement('option');
         option.value = tense;
         option.textContent = tense.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         tenseSelect.appendChild(option);
     });
-    tenseSelect.value = selectedTense;
+
+    const initialTense = 'present';
+    tenseSelect.value = initialTense;
+    selectedTense = initialTense;
+
     tenseSelect.addEventListener('change', (e) => {
         selectedTense = e.target.value;
         updateConjugationsForSelectedTense();
+        populateIrregularityOptions();
         populateVerbModal();
     });
+
+    // Populate irregularity options for default tense
+    populateIrregularityOptions();
 }
 
 function populateIrregularityOptions() {
     const irregularityOptionsDiv = document.getElementById('irregularity-options');
     if (!irregularityOptionsDiv) return;
     irregularityOptionsDiv.innerHTML = '';
-    const irregularityTypes = getUniqueIrregularityTypes();
 
-    irregularityTypes.forEach(type => {
+    const relevantIrregularityTypes = new Set();
+
+    // Filter verbs that contain the currently selected tense
+    const verbsForSelectedTense = allVerbsData.filter(verb => verb.conjugations[selectedTense]);
+
+    verbsForSelectedTense.forEach(verb => {
+        if (verb.types[selectedTense]) {
+            verb.types[selectedTense].forEach(type => {
+                if (type !== 'regular' && type !== 'reflexive') {
+                    relevantIrregularityTypes.add(type);
+                }
+            });
+        }
+    });
+
+    // Remove previously selected types that no longer apply
+    selectedIrregularityTypes.forEach(type => {
+        if (!relevantIrregularityTypes.has(type)) {
+            selectedIrregularityTypes.delete(type);
+        }
+    });
+
+    const sortedIrregularityTypes = Array.from(relevantIrregularityTypes).sort();
+
+    sortedIrregularityTypes.forEach(type => {
         const label = document.createElement('label');
         label.style.display = 'flex';
         label.style.alignItems = 'center';
@@ -123,8 +175,7 @@ function initializeGame() {
     // Set initial selected verbs (e.g., first 10 from loaded data)
     gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
 
-    populateTenseSelect();
-    populateIrregularityOptions();
+    populateTenseSelect(); // also sets selectedTense and irregularity options
     updateConjugationsForSelectedTense();
     generateBoards();
     updateSelectedVerbsDisplay();
@@ -196,24 +247,30 @@ function populateVerbModal() {
     const verbList = document.getElementById('verb-list');
     verbList.innerHTML = '';
 
+    const searchTerm = document.getElementById('verb-search').value.toLowerCase();
+
     const filteredVerbs = allVerbsData.filter(verb => {
+        const matchesSearchTerm = verb.infinitive_es.toLowerCase().includes(searchTerm);
+        if (!matchesSearchTerm) return false;
+
         if (!verb.conjugations[selectedTense]) return false;
 
-        let matchesIrregularity = true;
-        if (selectedIrregularityTypes.size > 0) {
-            const verbIrregularityTypes = Object.values(verb.types).flat();
-            matchesIrregularity = Array.from(selectedIrregularityTypes).every(type =>
-                verbIrregularityTypes.includes(type)
-            );
-        }
-        if (!matchesIrregularity) return false;
-
+        // Filter by reflexive only if requested
         if (showReflexiveOnly) {
-            if (!Object.values(verb.types).flat().includes('reflexive')) {
+            if (!Array.isArray(verb.types[selectedTense]) || !verb.types[selectedTense].includes('reflexive')) {
                 return false;
             }
         }
-        return true;
+
+        let matchesIrregularity = true;
+        if (selectedIrregularityTypes.size > 0) {
+            const verbIrregularityTypesForTense = verb.types[selectedTense] || [];
+            matchesIrregularity = Array.from(selectedIrregularityTypes).every(type =>
+                verbIrregularityTypesForTense.includes(type)
+            );
+        }
+
+        return matchesIrregularity;
     });
 
     filteredVerbs.forEach(verbData => {
@@ -231,13 +288,8 @@ function populateVerbModal() {
 }
 
 function filterVerbs() {
-    const searchTerm = document.getElementById('verb-search').value.toLowerCase();
-    const verbItems = document.querySelectorAll('.verb-item');
-    
-    verbItems.forEach(item => {
-        const verbName = item.textContent.toLowerCase();
-        item.style.display = verbName.includes(searchTerm) ? 'block' : 'none';
-    });
+    // Re-populate modal based on search term and filters
+    populateVerbModal();
 }
 
 function openVerbModal() {

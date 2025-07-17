@@ -1328,3 +1328,21 @@ body::after {
         color: #ffffff;
     }
 }
+
+/* Tense dropdown styles */
+.tense-selection select#tense-select option {
+    background-color: #1e3c72;
+    color: #e3f2fd;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
+
+.tense-selection select#tense-select option:hover {
+    background-color: #2a5298;
+}
+
+.search-input.active-select {
+    border-color: #42a5f5;
+    box-shadow: 0 0 20px rgba(66, 165, 245, 0.3);
+}
+
