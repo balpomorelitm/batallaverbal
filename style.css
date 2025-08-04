@@ -226,6 +226,7 @@ main {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
+    overflow-y: auto;
 }
 
 .modal-content {
@@ -235,7 +236,9 @@ main {
     border-radius: 12px;
     width: 90%;
     max-width: 600px;
-    box-shadow: 
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(66, 165, 245, 0.3);
