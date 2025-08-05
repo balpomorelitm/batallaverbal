@@ -430,7 +430,8 @@ function applyVerbSelection() {
         showToast('Please select at least one verb.', 'error');
         return;
     }
-    
+
+    document.body.classList.remove('custom-game');
     generateBoards();
     updateSelectedVerbsDisplay();
     closeVerbModal();
@@ -509,6 +510,7 @@ function startCustomGame() {
     }
 
     resetGame(false);
+    document.body.classList.add('custom-game');
 
     gameState.selectedVerbs = newVerbs;
     selectedTense = newTense;
@@ -1023,6 +1025,7 @@ function resetGame(confirmReset = true) {
     }
 
     if (proceed) {
+        document.body.classList.remove('custom-game');
         // Reset all ships to unplaced state
         Object.keys(gameState.ships).forEach(shipType => {
             gameState.ships[shipType].placed = false;
