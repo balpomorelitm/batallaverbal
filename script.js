@@ -1,6 +1,7 @@
 // Game State
 let gameState = {
     phase: 'placement', // 'placement', 'battle'
+    verifyConjugation: true,
     selectedVerbs: [],
     ships: {
         carrier: { size: 5, placed: false, position: null, orientation: 'horizontal' },
@@ -301,6 +302,16 @@ function setupEventListeners() {
     const newCustomBtn = document.getElementById('new-custom-game-btn');
     if (newCustomBtn) {
         newCustomBtn.addEventListener('click', openCustomGameModal);
+    }
+
+    // NEW: Event listener for Verify Conjugation toggle
+    const verifyToggle = document.getElementById('verify-conjugation-toggle');
+    if (verifyToggle) {
+        verifyToggle.addEventListener('change', function() {
+            gameState.verifyConjugation = this.checked;
+            const status = this.checked ? 'ON' : 'OFF';
+            showToast(`Conjugation check is now ${status}`, 'info');
+        });
     }
 
     // NEW: Event listener for Start Custom Game button inside the modal
@@ -933,6 +944,14 @@ function checkIfShipSunk(type){
 function handleAttackBoardClick(cell) {
     if (gameState.phase !== 'battle') return;
 
+    // If verification is OFF, unlock the cell immediately and cycle the icon
+    if (!gameState.verifyConjugation) {
+        cell.dataset.unlocked = 'true';
+        cycleAttackIcon(cell);
+        return;
+    }
+
+    // Original logic for when verification is ON
     if (cell.dataset.unlocked !== 'true') {
         // Apply chosen state and require conjugation
         cell.dataset.state = gameState.currentAttackState;
