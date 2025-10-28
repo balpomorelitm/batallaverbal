@@ -21,7 +21,7 @@ let allVerbsData = []; // Will store verbs from verbos.json
 let currentConjugations = {}; // Conjugations for the currently selected tense
 let selectedTense = 'present';
 let selectedIrregularityTypes = new Set();
-let showReflexiveOnly = false;
+let includeReflexiveVerbs = false;
 let showRegularVerbs = true;
 
 // Order of tenses from easiest to hardest for dropdown
@@ -326,7 +326,7 @@ function setupEventListeners() {
     const reflexiveCheckbox = document.getElementById('filter-reflexive-verbs');
     if (reflexiveCheckbox) {
         reflexiveCheckbox.addEventListener('change', (e) => {
-            showReflexiveOnly = e.target.checked;
+            includeReflexiveVerbs = e.target.checked;
             populateVerbModal();
         });
     }
@@ -370,28 +370,31 @@ function populateVerbModal() {
 
         if (!verb.conjugations[selectedTense]) return false;
 
-        // Filter by reflexive only if requested
-        if (showReflexiveOnly) {
-            if (!Array.isArray(verb.types[selectedTense]) || !verb.types[selectedTense].includes('reflexive')) {
-                return false;
-            }
+        const verbTypesForTense = Array.isArray(verb.types[selectedTense]) ? verb.types[selectedTense] : [];
+        const isRegular = verbTypesForTense.includes('regular');
+        const isReflexive = verbTypesForTense.includes('reflexive');
+        const hasIrregularSelection = selectedIrregularityTypes.size > 0;
+        const matchesSelectedIrregularity = verbTypesForTense.some(type => selectedIrregularityTypes.has(type));
+
+        let includeVerb = false;
+
+        if (showRegularVerbs && isRegular) {
+            includeVerb = true;
         }
 
-        if (!showRegularVerbs) {
-            if (Array.isArray(verb.types[selectedTense]) && verb.types[selectedTense].includes('regular')) {
-                return false;
-            }
+        if (hasIrregularSelection && matchesSelectedIrregularity) {
+            includeVerb = true;
         }
 
-        let matchesIrregularity = true;
-        if (selectedIrregularityTypes.size > 0) {
-            const verbIrregularityTypesForTense = verb.types[selectedTense] || [];
-            matchesIrregularity = Array.from(selectedIrregularityTypes).every(type =>
-                verbIrregularityTypesForTense.includes(type)
-            );
+        if (!hasIrregularSelection && !isRegular) {
+            includeVerb = true;
         }
 
-        return matchesIrregularity;
+        if (includeReflexiveVerbs && isReflexive) {
+            includeVerb = true;
+        }
+
+        return includeVerb;
     });
 
     filteredVerbs.forEach(verbData => {
@@ -944,18 +947,26 @@ function checkIfShipSunk(type){
 function handleAttackBoardClick(cell) {
     if (gameState.phase !== 'battle') return;
 
-    // If verification is OFF, unlock the cell immediately and cycle the icon
+    // If verification is OFF, unlock the cell immediately and apply or cycle the icon
     if (!gameState.verifyConjugation) {
         cell.dataset.unlocked = 'true';
-        cycleAttackIcon(cell);
+        if (gameState.currentAttackState === 'clear') {
+            applyAttackStateToCell(cell, 'clear');
+        } else {
+            cycleAttackIcon(cell);
+        }
+        return;
+    }
+
+    if (gameState.currentAttackState === 'clear') {
+        applyAttackStateToCell(cell, 'clear');
         return;
     }
 
     // Original logic for when verification is ON
     if (cell.dataset.unlocked !== 'true') {
         // Apply chosen state and require conjugation
-        cell.dataset.state = gameState.currentAttackState;
-        cell.className = `board-cell ${gameState.currentAttackState}`;
+        applyAttackStateToCell(cell, gameState.currentAttackState);
         showAttackModal(cell);
         return;
     }
@@ -964,13 +975,23 @@ function handleAttackBoardClick(cell) {
     cycleAttackIcon(cell);
 }
 
+function applyAttackStateToCell(cell, state) {
+    if (state === 'clear') {
+        delete cell.dataset.state;
+        cell.className = 'board-cell';
+        return;
+    }
+
+    cell.dataset.state = state;
+    cell.className = `board-cell ${state}`;
+}
+
 function cycleAttackIcon(cell) {
-    const order = ['water', 'hit', 'sunk'];
-    let idx = order.indexOf(cell.dataset.state || 'water');
+    const order = ['clear', 'water', 'hit', 'sunk'];
+    const currentState = cell.dataset.state || 'clear';
+    let idx = order.indexOf(currentState);
     idx = (idx + 1) % order.length;
-    cell.dataset.state = order[idx];
-    cell.classList.remove('water', 'hit', 'sunk');
-    cell.classList.add(order[idx]);
+    applyAttackStateToCell(cell, order[idx]);
 }
 
 function showAttackModal(cell) {
