@@ -1,7 +1,7 @@
 // Game State
 let gameState = {
     phase: 'placement', // 'placement', 'battle'
-    verifyConjugation: true,
+    verifyConjugation: false,
     selectedVerbs: [],
     ships: {
         carrier: { size: 5, placed: false, position: null, orientation: 'horizontal' },
@@ -339,6 +339,7 @@ function setupEventListeners() {
     // NEW: Event listener for Verify Conjugation toggle
     const verifyToggle = document.getElementById('verify-conjugation-toggle');
     if (verifyToggle) {
+        gameState.verifyConjugation = verifyToggle.checked;
         verifyToggle.addEventListener('change', function() {
             gameState.verifyConjugation = this.checked;
             const status = this.checked ? 'ON' : 'OFF';
