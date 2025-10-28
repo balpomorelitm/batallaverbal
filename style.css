@@ -343,6 +343,124 @@ main {
     backdrop-filter: blur(5px);
 }
 
+.verb-selection-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.verb-selection-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.verb-selection-heading {
+    margin: 0;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #e3f2fd;
+    text-transform: uppercase;
+}
+
+.selected-verbs-hint {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(179, 229, 252, 0.9);
+    font-family: 'Exo', sans-serif;
+}
+
+.selected-verbs-list {
+    min-height: 300px;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid rgba(66, 165, 245, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    background: rgba(8, 30, 55, 0.55);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.selected-verb-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 6px;
+    background: linear-gradient(135deg, rgba(21, 101, 192, 0.3), rgba(41, 121, 255, 0.25));
+    border: 1px solid rgba(66, 165, 245, 0.4);
+    cursor: grab;
+    transition: background 0.2s ease, border 0.2s ease, transform 0.2s ease;
+}
+
+.selected-verb-item:hover {
+    background: rgba(66, 165, 245, 0.3);
+    border-color: rgba(144, 202, 249, 0.6);
+}
+
+.selected-verb-item.dragging {
+    opacity: 0.6;
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+
+.selected-verb-item.drag-over-top {
+    box-shadow: 0 -4px 0 rgba(144, 202, 249, 0.9);
+}
+
+.selected-verb-item.drag-over-bottom {
+    box-shadow: 0 4px 0 rgba(144, 202, 249, 0.9);
+}
+
+.selected-verb-name {
+    flex: 1;
+    font-family: 'Exo', sans-serif;
+    font-size: 1rem;
+    color: #e3f2fd;
+}
+
+.remove-verb-btn {
+    background: rgba(229, 57, 53, 0.25);
+    border: 1px solid rgba(244, 67, 54, 0.5);
+    color: #ffcdd2;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease, border 0.2s ease;
+}
+
+.remove-verb-btn:hover {
+    background: rgba(229, 57, 53, 0.4);
+    border-color: rgba(244, 67, 54, 0.7);
+    transform: scale(1.05);
+}
+
+.selected-verbs-column {
+    position: relative;
+}
+
+.selected-verbs-column::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 12px;
+    border: 1px dashed rgba(66, 165, 245, 0.25);
+    pointer-events: none;
+}
+
 .verb-item {
     padding: 0.8rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);

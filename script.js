@@ -23,6 +23,8 @@ let selectedTense = 'present';
 let selectedIrregularityTypes = new Set();
 let includeReflexiveVerbs = false;
 let showRegularVerbs = true;
+let draggedVerbIndex = null;
+let workingSelectedVerbs = [];
 
 // Order of tenses from easiest to hardest for dropdown
 const TENSE_ORDER = [
@@ -285,6 +287,7 @@ function getShipAnchorOffset(shipType) {
 function initializeGame() {
     // Set initial selected verbs to the preferred defaults
     gameState.selectedVerbs = getDefaultVerbs();
+    resetWorkingSelectedVerbs();
 
     populateTenseSelect(); // also sets selectedTense and irregularity options
     updateConjugationsForSelectedTense();
@@ -359,7 +362,13 @@ function setupEventListeners() {
             populateVerbModal();
         });
     }
-    
+
+    const selectedVerbsList = document.getElementById('selected-verbs-list');
+    if (selectedVerbsList) {
+        selectedVerbsList.addEventListener('dragover', handleSelectedVerbsContainerDragOver);
+        selectedVerbsList.addEventListener('drop', handleSelectedVerbsContainerDrop);
+    }
+
     // Ship selection
     document.querySelectorAll('.ship').forEach(ship => {
         ship.addEventListener('click', function(e) {
@@ -387,8 +396,158 @@ function setupEventListeners() {
     });
 }
 
+function resetWorkingSelectedVerbs() {
+    workingSelectedVerbs = [...gameState.selectedVerbs];
+}
+
+function toggleVerbSelection(verb, shouldSelect) {
+    const currentIndex = workingSelectedVerbs.indexOf(verb);
+    if (shouldSelect) {
+        if (currentIndex === -1) {
+            workingSelectedVerbs.push(verb);
+        }
+    } else if (currentIndex !== -1) {
+        workingSelectedVerbs.splice(currentIndex, 1);
+    }
+
+    updateSelectedVerbsPanel();
+    syncVerbCheckboxes();
+}
+
+function updateSelectedVerbsPanel() {
+    const selectedList = document.getElementById('selected-verbs-list');
+    if (!selectedList) return;
+
+    selectedList.innerHTML = '';
+
+    workingSelectedVerbs.forEach((verb, index) => {
+        const item = document.createElement('div');
+        item.className = 'selected-verb-item';
+        item.draggable = true;
+        item.dataset.index = index;
+        item.dataset.verb = verb;
+
+        item.addEventListener('dragstart', handleSelectedVerbDragStart);
+        item.addEventListener('dragend', handleSelectedVerbDragEnd);
+        item.addEventListener('dragover', handleSelectedVerbDragOverItem);
+        item.addEventListener('dragleave', handleSelectedVerbDragLeaveItem);
+        item.addEventListener('drop', handleSelectedVerbDrop);
+
+        const name = document.createElement('span');
+        name.className = 'selected-verb-name';
+        name.textContent = verb;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-verb-btn';
+        removeBtn.setAttribute('aria-label', `Remove ${verb}`);
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', () => toggleVerbSelection(verb, false));
+
+        item.appendChild(name);
+        item.appendChild(removeBtn);
+        selectedList.appendChild(item);
+    });
+}
+
+function syncVerbCheckboxes() {
+    const checkboxes = document.querySelectorAll('#verb-list input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = workingSelectedVerbs.includes(checkbox.value);
+    });
+}
+
+function handleSelectedVerbDragStart(event) {
+    draggedVerbIndex = Number(event.currentTarget.dataset.index);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', event.currentTarget.dataset.verb);
+    event.currentTarget.classList.add('dragging');
+}
+
+function handleSelectedVerbDragOverItem(event) {
+    event.preventDefault();
+    const target = event.currentTarget;
+    if (Number(target.dataset.index) === draggedVerbIndex) {
+        target.classList.remove('drag-over-top', 'drag-over-bottom');
+        return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    const offset = event.clientY - rect.top;
+    const midpoint = rect.height / 2;
+
+    target.classList.toggle('drag-over-top', offset <= midpoint);
+    target.classList.toggle('drag-over-bottom', offset > midpoint);
+}
+
+function handleSelectedVerbDragLeaveItem(event) {
+    event.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+}
+
+function handleSelectedVerbDrop(event) {
+    event.preventDefault();
+    const target = event.currentTarget;
+    const targetIndex = Number(target.dataset.index);
+    target.classList.remove('drag-over-top', 'drag-over-bottom');
+
+    if (draggedVerbIndex === null || draggedVerbIndex === targetIndex) {
+        return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    const offset = event.clientY - rect.top;
+    const midpoint = rect.height / 2;
+
+    let newIndex = targetIndex + (offset > midpoint ? 1 : 0);
+
+    const verbs = [...workingSelectedVerbs];
+    const [movedVerb] = verbs.splice(draggedVerbIndex, 1);
+
+    if (newIndex > draggedVerbIndex) {
+        newIndex -= 1;
+    }
+
+    if (newIndex < 0) newIndex = 0;
+    if (newIndex > verbs.length) newIndex = verbs.length;
+
+    verbs.splice(newIndex, 0, movedVerb);
+    workingSelectedVerbs = verbs;
+
+    updateSelectedVerbsPanel();
+    syncVerbCheckboxes();
+}
+
+function handleSelectedVerbsContainerDragOver(event) {
+    event.preventDefault();
+}
+
+function handleSelectedVerbsContainerDrop(event) {
+    event.preventDefault();
+    if (draggedVerbIndex === null || event.target !== event.currentTarget) {
+        return;
+    }
+
+    const verbs = [...workingSelectedVerbs];
+    const [movedVerb] = verbs.splice(draggedVerbIndex, 1);
+    verbs.push(movedVerb);
+    workingSelectedVerbs = verbs;
+
+    updateSelectedVerbsPanel();
+    syncVerbCheckboxes();
+}
+
+function handleSelectedVerbDragEnd(event) {
+    event.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.selected-verb-item').forEach(item => {
+        item.classList.remove('drag-over-top', 'drag-over-bottom');
+    });
+    draggedVerbIndex = null;
+}
+
 function populateVerbModal() {
     const verbList = document.getElementById('verb-list');
+    if (!verbList) return;
+
     verbList.innerHTML = '';
 
     const searchTerm = document.getElementById('verb-search').value.toLowerCase();
@@ -430,14 +589,25 @@ function populateVerbModal() {
         const verb = verbData.infinitive_es;
         const verbItem = document.createElement('div');
         verbItem.className = 'verb-item';
-        verbItem.innerHTML = `
-            <label>
-                <input type="checkbox" value="${verb}" ${gameState.selectedVerbs.includes(verb) ? 'checked' : ''}>
-                ${verb}
-            </label>
-        `;
+
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = verb;
+        checkbox.checked = workingSelectedVerbs.includes(verb);
+        checkbox.addEventListener('change', (event) => {
+            toggleVerbSelection(verb, event.target.checked);
+        });
+
+        const textNode = document.createTextNode(verb);
+
+        label.appendChild(checkbox);
+        label.appendChild(textNode);
+        verbItem.appendChild(label);
         verbList.appendChild(verbItem);
     });
+
+    updateSelectedVerbsPanel();
 }
 
 function filterVerbs() {
@@ -446,34 +616,34 @@ function filterVerbs() {
 }
 
 function openVerbModal() {
+    resetWorkingSelectedVerbs();
+    populateVerbModal();
     document.getElementById('verb-modal').style.display = 'block';
 }
 
 function closeVerbModal() {
     document.getElementById('verb-modal').style.display = 'none';
+    resetWorkingSelectedVerbs();
+    updateSelectedVerbsPanel();
+    syncVerbCheckboxes();
 }
 
 function closeModals() {
     document.querySelectorAll('.modal').forEach(modal => {
         modal.style.display = 'none';
     });
+    resetWorkingSelectedVerbs();
+    updateSelectedVerbsPanel();
+    syncVerbCheckboxes();
 }
 
 function applyVerbSelection() {
-    const checkboxes = document.querySelectorAll('#verb-list input[type="checkbox"]');
-    gameState.selectedVerbs = [];
-    
-    checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            gameState.selectedVerbs.push(checkbox.value);
-        }
-    });
-    
-    if (gameState.selectedVerbs.length === 0) {
+    if (workingSelectedVerbs.length === 0) {
         showToast('Please select at least one verb.', 'error');
         return;
     }
 
+    gameState.selectedVerbs = [...workingSelectedVerbs];
     document.body.classList.remove('custom-game');
     generateBoards();
     updateSelectedVerbsDisplay();
@@ -556,6 +726,7 @@ function startCustomGame() {
     document.body.classList.add('custom-game');
 
     gameState.selectedVerbs = newVerbs;
+    resetWorkingSelectedVerbs();
     selectedTense = newTense;
 
     updateConjugationsForSelectedTense();
@@ -1140,6 +1311,7 @@ function resetGame(confirmReset = true) {
                 console.warn("allVerbsData not loaded yet during reset, using empty verb list.");
                 gameState.selectedVerbs = [];
             }
+            resetWorkingSelectedVerbs();
             selectedTense = 'present';
             populateTenseSelect();
             updateConjugationsForSelectedTense();
