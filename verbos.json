@@ -168,6 +168,34 @@
     }
   },
   {
+    "infinitive_es": "abrir",
+    "infinitive_en": "to open",
+    "types": {
+      "present": ["regular"],
+      "present_perfect": ["irregular_participle"],
+      "past_simple": ["regular"],
+      "future_simple": ["regular"],
+      "condicional_simple": ["regular"],
+      "imperfect_indicative": ["regular"]
+    },
+    "conjugations": {
+      "present": {"yo": "abro", "tú": "abres", "vos": "abrís", "él": "abre", "nosotros": "abrimos", "vosotros": "abrís", "ellos": "abren"},
+      "past_simple": {"yo": "abrí", "tú": "abriste", "vos": "abriste", "él": "abrió", "nosotros": "abrimos", "vosotros": "abristeis", "ellos": "abrieron"},
+      "present_perfect": {"yo": "he abierto", "tú": "has abierto", "vos": "has abierto", "él": "ha abierto", "nosotros": "hemos abierto", "vosotros": "habéis abierto", "ellos": "han abierto"},
+      "future_simple": {"yo": "abriré", "tú": "abrirás", "vos": "abrirás", "él": "abrirá", "nosotros": "abriremos", "vosotros": "abriréis", "ellos": "abrirán"},
+      "condicional_simple": {"yo": "abriría", "tú": "abrirías", "vos": "abrirías", "él": "abriría", "nosotros": "abriríamos", "vosotros": "abriríais", "ellos": "abrirían"},
+      "imperfect_indicative": {"yo": "abría", "tú": "abrías", "vos": "abrías", "él": "abría", "nosotros": "abríamos", "vosotros": "abríais", "ellos": "abrían"}
+    },
+    "conjugations_en": {
+      "present": {"I": "open", "you": "open", "he": "opens", "she": "opens", "it": "opens", "we": "open", "they": "open"},
+      "past_simple": {"I": "opened", "you": "opened", "he": "opened", "she": "opened", "it": "opened", "we": "opened", "they": "opened"},
+      "present_perfect": {"I": "have opened", "you": "have opened", "he": "has opened", "she": "has opened", "it": "has opened", "we": "have opened", "they": "have opened"},
+      "future_simple": {"I": "will open", "you": "will open", "he": "will open", "she": "will open", "it": "will open", "we": "will open", "they": "will open"},
+      "condicional_simple": {"I": "would open", "you": "would open", "he": "would open", "she": "would open", "it": "would open", "we": "would open", "they": "would open"},
+      "imperfect_indicative": {"I": "was opening", "you": "were opening", "he": "was opening", "she": "was opening", "it": "was opening", "we": "were opening", "they": "were opening"}
+    }
+  },
+  {
     "infinitive_es": "escribir",
     "infinitive_en": "to write",
     "types": {

@@ -36,6 +36,20 @@ const TENSE_ORDER = [
 
 const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'];
 
+const DEFAULT_VERBS = [
+    'hablar',
+    'beber',
+    'estar',
+    'correr',
+    'abrir',
+    'querer',
+    'llamarse',
+    'vivir',
+    'aprender',
+    'hacer'
+];
+
+
 
 // --- NUEVO CÓDIGO PARA ANIMACIÓN DE BARCOS ---
 const shipImages = [
@@ -100,6 +114,21 @@ function getUniqueIrregularityTypes() {
         });
     });
     return Array.from(types).sort();
+}
+
+function getDefaultVerbs() {
+    if (allVerbsData.length === 0) {
+        return [...DEFAULT_VERBS];
+    }
+
+    const availableVerbs = new Set(allVerbsData.map(verb => verb.infinitive_es));
+    const defaultVerbs = DEFAULT_VERBS.filter(verb => availableVerbs.has(verb));
+
+    if (defaultVerbs.length < DEFAULT_VERBS.length) {
+        console.warn('Some default verbs are missing from the loaded verb data.');
+    }
+
+    return defaultVerbs;
 }
 
 function populateTenseSelect() {
@@ -254,8 +283,8 @@ function getShipAnchorOffset(shipType) {
 }
 
 function initializeGame() {
-    // Set initial selected verbs (e.g., first 10 from loaded data)
-    gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
+    // Set initial selected verbs to the preferred defaults
+    gameState.selectedVerbs = getDefaultVerbs();
 
     populateTenseSelect(); // also sets selectedTense and irregularity options
     updateConjugationsForSelectedTense();
@@ -1106,7 +1135,7 @@ function resetGame(confirmReset = true) {
         // Restore default selected verbs and tense if performing a full reset
         if (confirmReset) {
             if (allVerbsData.length > 0) {
-                gameState.selectedVerbs = allVerbsData.slice(0, 10).map(v => v.infinitive_es);
+                gameState.selectedVerbs = getDefaultVerbs();
             } else {
                 console.warn("allVerbsData not loaded yet during reset, using empty verb list.");
                 gameState.selectedVerbs = [];
