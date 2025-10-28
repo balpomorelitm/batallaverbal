@@ -1204,18 +1204,24 @@ function showAttackModal(cell) {
     document.getElementById('attack-verb').textContent = verb;
     document.getElementById('attack-pronoun').textContent = pronoun;
     document.getElementById('attack-tense').textContent = selectedTense.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    document.getElementById('conjugation').value = '';
+    const conjugationInput = document.getElementById('conjugation');
+    conjugationInput.value = '';
     document.getElementById('conjugation-result').innerHTML = '';
-    
+
     modal.style.display = 'block';
-    
+
     // Setup conjugation check
     const checkBtn = document.getElementById('check-conjugation-btn');
+    checkBtn.disabled = true;
+    const updateCheckButtonState = () => {
+        checkBtn.disabled = conjugationInput.value.trim() === '';
+    };
+    conjugationInput.oninput = updateCheckButtonState;
     checkBtn.onclick = () => checkConjugation(cell, verb, pronoun);
-    
+
     // Allow Enter key to check
-    document.getElementById('conjugation').onkeypress = (e) => {
-        if (e.key === 'Enter') {
+    conjugationInput.onkeypress = (e) => {
+        if (e.key === 'Enter' && conjugationInput.value.trim() !== '') {
             checkConjugation(cell, verb, pronoun);
         }
     };
