@@ -1,4 +1,4 @@
-# ⚓ Batalla Naval: Spanish Conjugation Game ⚓
+# ⚓ Batalla Verbal: Spanish Conjugation Game ⚓
 
 ## Tabla de Contenidos
 - [Sobre el Proyecto](#sobre-el-proyecto)
