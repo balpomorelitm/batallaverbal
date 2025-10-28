@@ -54,8 +54,20 @@
                             Show also reflexive verbs
                         </label>
                     </div>
-                    <div id="verb-list" class="verb-list">
-                        <!-- Verbs will be populated by JavaScript -->
+                    <div class="verb-selection-container">
+                        <div class="verb-selection-column">
+                            <h3 class="verb-selection-heading">Available Verbs</h3>
+                            <div id="verb-list" class="verb-list">
+                                <!-- Verbs will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="verb-selection-column selected-verbs-column">
+                            <h3 class="verb-selection-heading">Selected Verbs</h3>
+                            <p class="selected-verbs-hint">Drag to reorder or click × to remove.</p>
+                            <div id="selected-verbs-list" class="selected-verbs-list">
+                                <!-- Selected verbs will appear here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
