@@ -1188,7 +1188,7 @@ function applyAttackStateToCell(cell, state) {
 }
 
 function cycleAttackIcon(cell) {
-    const order = ['clear', 'water', 'hit', 'sunk'];
+    const order = ['water', 'hit', 'sunk', 'clear'];
     const currentState = cell.dataset.state || 'clear';
     let idx = order.indexOf(currentState);
     idx = (idx + 1) % order.length;
