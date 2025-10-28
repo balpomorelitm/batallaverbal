@@ -1153,6 +1153,7 @@ function handleAttackBoardClick(cell) {
         cell.dataset.unlocked = 'true';
         if (gameState.currentAttackState === 'clear') {
             applyAttackStateToCell(cell, 'clear');
+            resetAttackStateSelection();
         } else {
             cycleAttackIcon(cell);
         }
@@ -1161,6 +1162,7 @@ function handleAttackBoardClick(cell) {
 
     if (gameState.currentAttackState === 'clear') {
         applyAttackStateToCell(cell, 'clear');
+        resetAttackStateSelection();
         return;
     }
 
@@ -1253,16 +1255,25 @@ function checkConjugation(cell, verb, pronoun) {
 }
 
 function setAttackState(e) {
-    // Remove active class from all buttons
+    const button = e.currentTarget;
+    const alreadyActive = button.classList.contains('active');
+
     document.querySelectorAll('.btn-state').forEach(btn => {
         btn.classList.remove('active');
     });
-    
-    // Add active class to clicked button
-    e.target.classList.add('active');
-    
-    // Set current attack state
-    gameState.currentAttackState = e.target.dataset.state;
+
+    if (alreadyActive) {
+        gameState.currentAttackState = 'water';
+        return;
+    }
+
+    button.classList.add('active');
+    gameState.currentAttackState = button.dataset.state;
+}
+
+function resetAttackStateSelection() {
+    document.querySelectorAll('.btn-state').forEach(btn => btn.classList.remove('active'));
+    gameState.currentAttackState = 'water';
 }
 
 function resetGame(confirmReset = true) {
@@ -1332,10 +1343,7 @@ function resetGame(confirmReset = true) {
         updateGamePhase();
 
         // Reset attack state buttons
-        document.querySelectorAll('.btn-state').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        document.getElementById('water-btn').classList.add('active');
+        resetAttackStateSelection();
     }
 }
 
