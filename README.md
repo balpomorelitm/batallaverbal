@@ -11,7 +11,7 @@
 
 
 ## Sobre el Proyecto
-**Batalla Naval** es un innovador juego interactivo diseñado para hacer el aprendizaje de la conjugación de verbos en español divertido y efectivo. Combina la estrategia del clásico juego de Batalla Naval con la práctica de gramática, donde cada ataque requiere conjugar un verbo correctamente. ¡Hunde la flota enemiga mientras dominas el español!
+**Batalla Verbal** es un innovador juego interactivo diseñado para hacer el aprendizaje de la conjugación de verbos en español divertido y efectivo. Combina la estrategia del clásico juego de Batalla Naval con la práctica de gramática, donde cada ataque requiere conjugar un verbo correctamente. ¡Hunde la flota enemiga mientras dominas el español!
 
 *(English: Battleship Verb Conjugation is an innovative interactive game designed to make learning Spanish verb conjugation fun and effective. It combines the strategy of the classic Battleship game with grammar practice, where each attack requires correct verb conjugation. Sink the enemy fleet while mastering Spanish!)*
 
