@@ -40,7 +40,7 @@ const pronouns = ['yo', 'tú', 'él/ella', 'nosotros', 'vosotros', 'ellos/ellas'
 
 const DEFAULT_VERBS = [
     'hablar',
-    'beber',
+    'comprender',
     'estar',
     'correr',
     'abrir',

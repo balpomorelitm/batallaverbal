@@ -1484,8 +1484,8 @@
     }
   },
   {
-    "infinitive_es": "beber",
-    "infinitive_en": "to drink",
+    "infinitive_es": "comprender",
+    "infinitive_en": "to understand",
     "types": {
       "present": ["regular"],
       "present_perfect": ["regular"],
@@ -1495,20 +1495,20 @@
       "imperfect_indicative": ["regular"]
     },
     "conjugations": {
-      "present": {"yo": "bebo", "tú": "bebes", "vos": "bebés", "él": "bebe", "nosotros": "bebemos", "vosotros": "bebéis", "ellos": "beben"},
-      "past_simple": {"yo": "bebí", "tú": "bebiste", "vos": "bebiste", "él": "bebió", "nosotros": "bebimos", "vosotros": "bebisteis", "ellos": "bebieron"},
-      "present_perfect": {"yo": "he bebido", "tú": "has bebido", "vos": "has bebido", "él": "ha bebido", "nosotros": "hemos bebido", "vosotros": "habéis bebido", "ellos": "han bebido"},
-      "future_simple": {"yo": "beberé", "tú": "beberás", "vos": "beberás", "él": "beberá", "nosotros": "beberemos", "vosotros": "beberéis", "ellos": "beberán"},
-      "condicional_simple": {"yo": "bebería", "tú": "beberías", "vos": "beberías", "él": "bebería", "nosotros": "beberíamos", "vosotros": "beberíais", "ellos": "beberían"},
-      "imperfect_indicative": {"yo": "bebía", "tú": "bebías", "vos": "bebías", "él": "bebía", "nosotros": "bebíamos", "vosotros": "bebíais", "ellos": "bebían"}
+      "present": {"yo": "comprendo", "tú": "comprendes", "vos": "comprendés", "él": "comprende", "nosotros": "comprendemos", "vosotros": "comprendéis", "ellos": "comprenden"},
+      "past_simple": {"yo": "comprendí", "tú": "comprendiste", "vos": "comprendiste", "él": "comprendió", "nosotros": "comprendimos", "vosotros": "comprendisteis", "ellos": "comprendieron"},
+      "present_perfect": {"yo": "he comprendido", "tú": "has comprendido", "vos": "has comprendido", "él": "ha comprendido", "nosotros": "hemos comprendido", "vosotros": "habéis comprendido", "ellos": "han comprendido"},
+      "future_simple": {"yo": "comprenderé", "tú": "comprenderás", "vos": "comprenderás", "él": "comprenderá", "nosotros": "comprenderemos", "vosotros": "comprenderéis", "ellos": "comprenderán"},
+      "condicional_simple": {"yo": "comprendería", "tú": "comprenderías", "vos": "comprenderías", "él": "comprendería", "nosotros": "comprenderíamos", "vosotros": "comprenderíais", "ellos": "comprenderían"},
+      "imperfect_indicative": {"yo": "comprendía", "tú": "comprendías", "vos": "comprendías", "él": "comprendía", "nosotros": "comprendíamos", "vosotros": "comprendíais", "ellos": "comprendían"}
     },
     "conjugations_en": {
-      "present": {"I": "drink", "you": "drink", "he": "drinks", "she": "drinks", "it": "drinks", "we": "drink", "they": "drink"},
-      "past_simple": {"I": "drank", "you": "drank", "he": "drank", "she": "drank", "it": "drank", "we": "drank", "they": "drank"},
-      "present_perfect": {"I": "have drunk", "you": "have drunk", "he": "has drunk", "she": "has drunk", "it": "has drunk", "we": "have drunk", "they": "have drunk"},
-      "future_simple": {"I": "will drink", "you": "will drink", "he": "will drink", "she": "will drink", "it": "will drink", "we": "will drink", "they": "will drink"},
-      "condicional_simple": {"I": "would drink", "you": "would drink", "he": "would drink", "she": "would drink", "it": "would drink", "we": "would drink", "they": "would drink"},
-      "imperfect_indicative": {"I": "was drinking", "you": "were drinking", "he": "was drinking", "she": "was drinking", "it": "was drinking", "we": "were drinking", "they": "were drinking"}
+      "present": {"I": "understand", "you": "understand", "he": "understands", "she": "understands", "it": "understands", "we": "understand", "they": "understand"},
+      "past_simple": {"I": "understood", "you": "understood", "he": "understood", "she": "understood", "it": "understood", "we": "understood", "they": "understood"},
+      "present_perfect": {"I": "have understood", "you": "have understood", "he": "has understood", "she": "has understood", "it": "has understood", "we": "have understood", "they": "have understood"},
+      "future_simple": {"I": "will understand", "you": "will understand", "he": "will understand", "she": "will understand", "it": "will understand", "we": "will understand", "they": "will understand"},
+      "condicional_simple": {"I": "would understand", "you": "would understand", "he": "would understand", "she": "would understand", "it": "would understand", "we": "would understand", "they": "would understand"},
+      "imperfect_indicative": {"I": "was understanding", "you": "were understanding", "he": "was understanding", "she": "was understanding", "it": "was understanding", "we": "were understanding", "they": "were understanding"}
     }
   },
 {
